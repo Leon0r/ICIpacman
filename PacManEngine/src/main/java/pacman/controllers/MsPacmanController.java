@@ -15,6 +15,7 @@ public final class MsPacmanController extends PacmanController {
 	
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
+		allMoves = MOVE.values();
 		if(getMove() == null)
 			allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
 		else

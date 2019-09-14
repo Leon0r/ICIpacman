@@ -2,6 +2,7 @@ package pacman;
 
 import pacman.controllers.Controller;
 import pacman.controllers.GhostController;
+import pacman.controllers.GhostsAgressive;
 import pacman.controllers.GhostsRandom;
 import pacman.controllers.HumanController;
 import pacman.controllers.KeyBoardInput;
@@ -20,7 +21,7 @@ public class Main {
 				.setScaleFactor(3.0)
 				.build();
 		PacmanController pacman = new MsPacmanController();
-		GhostController ghosts = new GhostsRandom();
+		GhostController ghosts = new GhostsAgressive();
 		
 		System.out.println(
 				executor.runGame(pacman, ghosts, 50)
