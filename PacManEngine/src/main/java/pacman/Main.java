@@ -1,5 +1,6 @@
 package pacman;
 
+import es.ucm.fdi.ici.c1920.practica0.grupoYY.MsPacMan;
 import pacman.controllers.Controller;
 import pacman.controllers.GhostController;
 import pacman.controllers.GhostsAgressive;
@@ -20,7 +21,7 @@ public class Main {
 				.setVisual(true)
 				.setScaleFactor(3.0)
 				.build();
-		PacmanController pacman = new MsPacmanController();
+		PacmanController pacman = new MsPacMan();
 		GhostController ghosts = new GhostsAgressive();
 		
 		System.out.println(
