@@ -3,71 +3,54 @@ package es.ucm.fdi.ici.c1920.practica0.grupoYY;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
+
+import java.util.Random;
+
 import pacman.controllers.PacmanController;
 import pacman.game.Game;
 
 public class MsPacMan extends PacmanController {
 	//Interesting functions: line 1556 in game class
-	private DM[] allDM = DM.values();
+	private DM[] allDM = DM.values(); //DM: PATH, EUCLID, MANHATTAN
+	private Random rnd  = new Random();
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
 
 		int limit = 20;
-
-		int ghost = -1;
-		/*int[] ghosts = new int[4];
-		int i = 0;
+		double nearestD = limit;
+		double distance;
+		GHOST ghostT = null;
+		int nearestP = -1;
+		MOVE move;
 
 		for(GHOST ghostType : GHOST.values()) {
-			ghosts[i++]= game.getGhostCurrentNodeIndex(ghostType);
-		}
-		ghost  = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), ghosts, allDM[0]);*/
-
-
-		double d = limit;
-		double aux;
-		for(GHOST ghostType : GHOST.values()) {
-			aux = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostType), allDM[1]);
-			if(aux != -1 && aux <= d) {
-				d = aux;
-				ghost = game.getGhostCurrentNodeIndex(ghostType);
-				System.out.println(d);
+			distance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostType), allDM[0]);
+			if(distance != -1 && distance <= nearestD) {
+				nearestD = distance;
+				ghostT = ghostType;
 			}
 		}
 
-
-		//DM: PATH, EUCLID, MANHATTAN
-		if(ghost != -1) 
-		{
-			GHOST ghostType = null;
-			for(GHOST g : GHOST.values()) {
-				if(game.getGhostCurrentNodeIndex(g) == ghost)
-					ghostType = g;
-			}
-
-			if(game.isGhostEdible(ghostType))
-				return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), ghost, allDM[1]);
+		if(ghostT != null) {
+			if(game.isGhostEdible(ghostT))
+				return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 			else
-				return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), ghost, allDM[1]);
-		}else {
-			if(game.wasPillEaten()) {
-				double auxP = -1;
-				double nearestPill = -1;
-				int nearestIndex = -1;
-				for(int p : game.getActivePillsIndices()) {
-					auxP = game.getDistance(game.getPacmanCurrentNodeIndex(), p, allDM[1]);
-					if(nearestPill == -1 || nearestPill>auxP) {
-						nearestPill = auxP;
-						nearestIndex= p;
-					}
-				}
-
-				return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestIndex, allDM[1]);
-			}
-			else 
-				return game.getPacmanLastMoveMade();
+				return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 		}
-	}
+		else {
+			for(int pill : game.getActivePillsIndices()) {
+				distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, allDM[0]);
+				if(nearestP == -1 || distance <= nearestD) {
+					nearestD = distance;
+					nearestP = pill;
+				}
+			}
 
+			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);//NOT POSISBLE TO DON'T HAVE AT LEAST ONE ACTIVE PILL
+		}
+
+		return move;
+	}
 }
+

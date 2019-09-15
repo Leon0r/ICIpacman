@@ -15,19 +15,14 @@ public final class MsPacmanController extends PacmanController {
 	
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
-		if(getMove() == null) {
-			allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
-		}
-		else if(allMoves.length <= 1 && getMove().opposite() == allMoves[0]){
+		if(game.getPacmanLastMoveMade() == null) {
 			allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
 		}
 		else {
-			allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), getMove());
-		}
-		if(allMoves == null) {
-			allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
+			allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 		}
 		lastMove = allMoves[rnd.nextInt(allMoves.length)];
+		
 		return lastMove;
 	}
 }
