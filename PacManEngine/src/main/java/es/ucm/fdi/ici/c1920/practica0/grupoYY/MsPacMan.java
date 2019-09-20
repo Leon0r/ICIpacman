@@ -32,6 +32,8 @@ public class MsPacMan extends PacmanController {
 			}
 		}
 
+		nearestD= -1;
+		
 		if(ghostT != null) {
 			if(game.isGhostEdible(ghostT))
 				return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
