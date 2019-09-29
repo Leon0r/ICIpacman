@@ -91,13 +91,23 @@ public class MsPacMan extends PacmanController {
 								ini++;
 						}
 					}
-					
-					
-					
+					// no safe path
 					if(fin == -1) {
 						if(carryOn) {
 							move = game.getPacmanLastMoveMade();
-						}else {							
+						}else {
+
+							for(MOVE m : allMoves) {
+								int index = game.getPacmanCurrentNodeIndex();
+								for(int i = 0; i < 4; i++) {
+									index = game.getNeighbour(index, m) != -1? game.getNeighbour(index, m) : index;
+									MOVE[] movesP = game.getPossibleMoves(index, m);
+									if(movesP.length>1) {
+										move = m;	
+										return move;
+									}
+								}
+							}
 							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghD), allDM[0]);
 							carryOn = true;
 						}
@@ -106,6 +116,7 @@ public class MsPacMan extends PacmanController {
 						carryOn = false;
 						move = allMoves[rnd.nextInt(fin+1)];
 					}
+
 				}else
 					move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 			}
