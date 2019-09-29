@@ -20,12 +20,13 @@ public class MsPacMan extends PacmanController {
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
 
-		int limit = 20;
+		int limit = 23;
 		double nearestD = limit;
 		double distance;
 		GHOST ghostT = null;
 		List<GHOST> nearGhosts = new ArrayList<GHOST>();
 		int nearestP = -1;
+		int nearestPowP = -1;
 		MOVE move;
 		boolean powerPill = false;
 		MOVE[] allMoves;
@@ -49,14 +50,26 @@ public class MsPacMan extends PacmanController {
 			}
 		}
 
-		nearestD = -1;
-
 		//If a ghost is found and it is edible, goes towards it. If it is not edible, runs away from it. If there is no ghost, eats pills.
 		if(ghostT != null) {
 			if(game.isGhostEdible(ghostT)) {
 				move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 			}
-			else {				
+			else {
+				nearestD = -1;
+				for(int pPill : game.getActivePowerPillsIndices()) {
+					distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pPill, allDM[0]);
+					if(nearestPowP == -1 || distance <= nearestD) {
+						nearestD = distance;
+						nearestPowP = pPill;
+					}
+				}
+				// movement towards nearest powerpill
+				if(nearestPowP != -1)
+					move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, allDM[0]);
+				else // esto es porque java es tonto y no nos deja hacerlo bien
+					move = MOVE.NEUTRAL;
+
 				// si hay mas de un ghost following us
 				if(nearGhosts.size()>=2) {
 					///////////////////////////////
@@ -114,6 +127,26 @@ public class MsPacMan extends PacmanController {
 					}
 					else {
 						carryOn = false;
+						// va a por power pill
+
+						for(int i =0; i<fin+1;i++)
+							if(move == allMoves[i])
+								return move;
+						// busca la pill mas cercana
+						nearestD = -1;
+						for(int pill : game.getActivePillsIndices()) {
+							distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, allDM[0]);
+							if(nearestP == -1 || distance <= nearestD) {
+								nearestD = distance;
+								nearestP = pill;
+							}
+						}
+						// se mueve hacia ella si no es un suicidio
+						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
+						for(int i =0; i<fin+1;i++)
+							if(move == allMoves[i])
+								return move;
+						// si no, random de lo que pueda moverse
 						move = allMoves[rnd.nextInt(fin+1)];
 					}
 
@@ -122,6 +155,7 @@ public class MsPacMan extends PacmanController {
 			}
 		}
 		else {
+			nearestD = -1;
 			for(int pill : game.getActivePillsIndices()) {
 				distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, allDM[0]);
 				if(nearestP == -1 || distance <= nearestD) {
@@ -131,7 +165,7 @@ public class MsPacMan extends PacmanController {
 			}
 			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
 
-			/*int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
+			int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
 			if(index != -1) {
 				if(game.getPowerPillIndex(index) != -1) {//If it is a powerPill
 					if(!powerPill) {
@@ -139,7 +173,7 @@ public class MsPacMan extends PacmanController {
 						move = allMoves[rnd.nextInt(allMoves.length)];
 					}
 				}
-			}*/
+			}
 		}
 
 		return move;
