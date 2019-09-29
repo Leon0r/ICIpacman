@@ -43,11 +43,6 @@ public class MsPacMan extends PacmanController {
 					ghostT = ghostType;
 				}
 			}
-			/*else if(distance != -1 && distance <= limit*3 && !powerPill) { 
-				if(!game.isGhostEdible(ghostType)){
-					powerPill = true;
-				}
-			}*/
 		}
 
 		//If a ghost is found and it is edible, goes towards it. If it is not edible, runs away from it. If there is no ghost, eats pills.
@@ -164,17 +159,6 @@ public class MsPacMan extends PacmanController {
 				}
 			}
 			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
-
-			int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
-			if(index != -1) {
-				if(game.getPowerPillIndex(index) != -1) {//If it is a powerPill
-					//if(!powerPill) {
-					
-						allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), move.opposite());
-						move = allMoves[rnd.nextInt(allMoves.length)];
-					//}
-				}
-			}
 		}
 
 		return move;
