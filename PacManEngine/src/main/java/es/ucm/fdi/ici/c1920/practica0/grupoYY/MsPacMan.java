@@ -26,6 +26,9 @@ public class MsPacMan extends PacmanController {
 		List<GHOST> nearGhosts = new ArrayList<GHOST>();
 		int nearestP = -1;
 		MOVE move;
+		boolean powerPill = false;
+		MOVE[] allMoves;
+
 
 		//Finds nearest ghost inside the limit
 		for(GHOST ghostType : GHOST.values()) {
@@ -38,6 +41,11 @@ public class MsPacMan extends PacmanController {
 					ghostT = ghostType;
 				}
 			}
+			else if(distance != -1 && distance <= limit*3 && !powerPill) { 
+				if(!game.isGhostEdible(ghostType)){
+					powerPill = true;
+				}
+			}
 		}
 
 		nearestD = -1;
@@ -45,17 +53,17 @@ public class MsPacMan extends PacmanController {
 		//If a ghost is found and it is edible, goes towards it. If it is not edible, runs away from it. If there is no ghost, eats pills.
 		if(ghostT != null) {
 			if(game.isGhostEdible(ghostT)) {
-				return move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
+				move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 			}
 			else {				
 				// si hay mas de un ghost following us
 				if(nearGhosts.size()>=2) {
 					// pillar todos los mov posibles
-					MOVE[] allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
+					allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
 					int ini, fin = allMoves.length - 1;
 					double greatestD = 0;
 					GHOST ghD = ghostT;
-
+					
 					for(GHOST ghType : nearGhosts) {
 						ini = 0;
 						while(ini <= fin) {
@@ -77,14 +85,14 @@ public class MsPacMan extends PacmanController {
 						}
 					}
 					if(fin == -1) {
-						return move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghD), allDM[0]);
+						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghD), allDM[0]);
 
 					}
 					else {
-						return move = allMoves[rnd.nextInt(fin)];
+						move = allMoves[rnd.nextInt(fin)];
 					}
 				}else
-					return move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
+					move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 			}
 		}
 		else {
@@ -95,30 +103,20 @@ public class MsPacMan extends PacmanController {
 					nearestP = pill;
 				}
 			}
-			return move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
+			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
 
 			/*int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
 			if(index != -1) {
-				if(game.getPowerPillIndex(index) == -1) {
-					return move;
-				}
-				else {
-					//Find how many edible ghosts are there and if... half? then eat power pill. If not, try other direction. 
-					int edGh = 0;
-					for(GHOST ghostType : GHOST.values()) {
-						if(game.isGhostEdible(ghostType))
-							edGh++;
+				if(game.getPowerPillIndex(index) != -1) {//If it is a powerPill
+					if(!powerPill) {
+						allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), move.opposite());
+						move = allMoves[rnd.nextInt(allMoves.length)];
 					}
-
-					//if (edGh<=2)
-					return move;
-					//else
-
 				}
 			}*/
 		}
 
-		//return move;
+		return move;
 	}
 }
 
