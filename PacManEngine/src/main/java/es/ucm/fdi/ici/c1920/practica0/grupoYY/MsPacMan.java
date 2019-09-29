@@ -33,7 +33,7 @@ public class MsPacMan extends PacmanController {
 		}
 
 		nearestD= -1;
-		
+
 		//If a ghost is found and it is edible, goes towards it. If it is not edible, runs away from it. If there is no ghost, eats pills.
 		if(ghostT != null) {
 			if(game.isGhostEdible(ghostT)) {
@@ -51,7 +51,7 @@ public class MsPacMan extends PacmanController {
 				}
 			}
 			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
-			
+
 			int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
 			if(index != -1) {
 				if(game.getPowerPillIndex(index) == -1) {
@@ -59,6 +59,16 @@ public class MsPacMan extends PacmanController {
 				}
 				else {
 					//Find how many edible ghosts are there and if... half? then eat power pill. If not, try other direction. 
+					int edGh = 0;
+					for(GHOST ghostType : GHOST.values()) {
+						if(game.isGhostEdible(ghostType))
+							edGh++;
+					}
+					
+					if (edGh<=2)
+						return move;
+					//else
+						
 				}
 			}
 		}
