@@ -15,6 +15,7 @@ import pacman.game.Game;
 public class MsPacMan extends PacmanController {
 	private DM[] allDM = DM.values(); //DM: PATH, EUCLID, MANHATTAN
 	private Random rnd  = new Random();
+	private boolean carryOn = false;
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
@@ -58,12 +59,18 @@ public class MsPacMan extends PacmanController {
 			else {				
 				// si hay mas de un ghost following us
 				if(nearGhosts.size()>=2) {
+					///////////////////////////////
+					for(GHOST g : nearGhosts)
+						if(game.isGhostEdible(g))
+							return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(g), allDM[0]);
+					///////////////////////////////
+
 					// pillar todos los mov posibles
 					allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
 					int ini, fin = allMoves.length - 1;
 					double greatestD = 0;
 					GHOST ghD = ghostT;
-					
+
 					for(GHOST ghType : nearGhosts) {
 						ini = 0;
 						while(ini <= fin) {
@@ -84,12 +91,20 @@ public class MsPacMan extends PacmanController {
 								ini++;
 						}
 					}
+					
+					
+					
 					if(fin == -1) {
-						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghD), allDM[0]);
-
+						if(carryOn) {
+							move = game.getPacmanLastMoveMade();
+						}else {							
+							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghD), allDM[0]);
+							carryOn = true;
+						}
 					}
 					else {
-						move = allMoves[rnd.nextInt(fin)];
+						carryOn = false;
+						move = allMoves[rnd.nextInt(fin+1)];
 					}
 				}else
 					move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
