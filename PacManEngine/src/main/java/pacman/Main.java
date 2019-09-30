@@ -20,7 +20,7 @@ public class Main {
 				.setPacmanPO(false)
 				.setGhostsMessage(false)
 				.setVisual(true)
-				.setScaleFactor(3.0)
+				.setScaleFactor(2.5)
 				.build();
 		PacmanController pacman = new MsPacMan();
 		GhostController ghosts = new Ghosts();
