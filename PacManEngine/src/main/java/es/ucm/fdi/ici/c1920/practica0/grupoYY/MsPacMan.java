@@ -23,7 +23,7 @@ public class MsPacMan extends PacmanController {
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
 
-		int limit = 23, nearestPowP;
+		int nearestPowP, nearestP;
 		double nearestD = limit;
 		double distance;
 		GHOST ghostT = null;
@@ -50,18 +50,13 @@ public class MsPacMan extends PacmanController {
 						move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
 					}
 					else {// si hay mas de un ghost following us
-						///////////////////////////////
-						for(GHOST g : nearGhosts)
-							if(game.isGhostEdible(g))
-								return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(g), allDM[0]);
-						///////////////////////////////
 
 						// pillar todos los mov posibles
 						allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
 						int ini, fin = allMoves.length - 1;
 						double greatestD = 0;
 						GHOST ghD = ghostT;
-						List<GHOST> edibleG;
+						List<GHOST> edibleG = null;
 
 						for(GHOST ghType : nearGhosts) {
 							//Si me puedo comer al fantasma, lo guardo como posible futuro objetivo
@@ -121,19 +116,13 @@ public class MsPacMan extends PacmanController {
 						else {
 							carryOn = false;
 							// va a por power pill
-
+							nearestPowP = findNearestPowerPill(game);
+							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, allDM[0]);
 							for(int i =0; i<fin+1;i++)
 								if(move == allMoves[i])
 									return move;
 							// busca la pill mas cercana
-							nearestD = -1;
-							for(int pill : game.getActivePillsIndices()) {
-								distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, allDM[0]);
-								if(nearestP == -1 || distance <= nearestD) {
-									nearestD = distance;
-									nearestP = pill;
-								}
-							}
+							nearestP = findNearestPill(game);
 							// se mueve hacia ella si no es un suicidio
 							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
 							for(int i =0; i<fin+1;i++)
@@ -147,8 +136,8 @@ public class MsPacMan extends PacmanController {
 			}
 		}
 		else {
-
-			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), findNearestPill(game), allDM[0]);
+			nearestP = findNearestPill(game);
+			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, allDM[0]);
 
 			/*int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
 			if(index != -1) {
