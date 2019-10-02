@@ -43,8 +43,13 @@ public class MsPacMan extends PacmanController {
 			else {
 				nearestPowP = findNearestPowerPill(game);
 				// movement towards nearest powerpill
-				if(nearestPowP != -1)
+				if(nearestPowP != -1) {
 					move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, allDM[0]);
+					MOVE mov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
+					if(move == mov) {
+						move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0])
+					}
+				}
 				else { 
 					if(nearGhosts.size() < 2) {//Mejorar a huir por el camino con pills
 						move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), allDM[0]);
@@ -56,7 +61,7 @@ public class MsPacMan extends PacmanController {
 						int ini, fin = allMoves.length - 1;
 						double greatestD = 0;
 						GHOST ghD = ghostT;
-						List<GHOST> edibleG = null;
+						List<GHOST> edibleG = new ArrayList<GHOST>();
 
 						for(GHOST ghType : nearGhosts) {
 							//Si me puedo comer al fantasma, lo guardo como posible futuro objetivo
@@ -87,7 +92,7 @@ public class MsPacMan extends PacmanController {
 							if(carryOn) {
 								move = game.getPacmanLastMoveMade();
 							}else {
-								if(!edibleG.isEmpty()) {
+								if(!edibleG.isEmpty()) {//Si edibleG es null, error
 									Iterator<GHOST> it = edibleG.iterator();
 									do{
 										move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(it.next()), allDM[0]);
@@ -197,11 +202,6 @@ public class MsPacMan extends PacmanController {
 					ghostT = ghostType;
 				}
 			}
-			/*else if(distance != -1 && distance <= limit*3 && !powerPill) { 
-				if(!game.isGhostEdible(ghostType)){
-					powerPill = true;
-				}
-			}*/
 		}
 		return ghostT;
 	}
