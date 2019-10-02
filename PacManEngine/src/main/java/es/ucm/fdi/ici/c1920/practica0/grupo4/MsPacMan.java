@@ -42,23 +42,28 @@ public class MsPacMan extends PacmanController {
 			}
 			else {
 				//Take possible moves
-				allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
+				allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 				fin = allMoves.length - 1;
-				
+
 				//If only one ghost following, evade
 				if(nearGhosts.size() < 2) {					
 					//Find safe paths
 					fin = findAllSafePaths(game, ghostT, fin);
-					
-					//Find nearest pill and do the move if it is safe
-					nearestP = findNearestPill(game);
-					move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
-					for(int i = 0; i < fin+1; i++)
-						if(move == allMoves[i])
-							return move;
-					
-					//If the move is not possible, get a possible one randomly
-					move = allMoves[rnd.nextInt(fin+1)];
+
+					if(fin == -1) {
+						move = game.getPacmanLastMoveMade().opposite();
+					}
+					else {
+						//Find nearest pill and do the move if it is safe
+						nearestP = findNearestPill(game);
+						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
+						for(int i = 0; i < fin+1; i++)
+							if(move == allMoves[i])
+								return move;
+
+						//If the move is not possible, get a possible one randomly
+						move = allMoves[rnd.nextInt(fin+1)];
+					}
 				}
 				//If there is more than one ghost following
 				else {					
@@ -78,7 +83,7 @@ public class MsPacMan extends PacmanController {
 							for(int i = 0; i < fin+1; i++)
 								if(move == allMoves[i])
 									return move;
-							
+
 							//If the move is not possible, get a possible one randomly
 							carryOn = false;
 							allMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
@@ -97,7 +102,7 @@ public class MsPacMan extends PacmanController {
 									}
 								}while(it.hasNext()); 
 							}
-							
+
 							//If any of the ghosts are edible, look if there will be new options two cells ahead in all the possible moves
 							for(MOVE m : allMoves) {//TO DO: Se come a los fantasmas si la predicción les sobrepasa
 								index = game.getPacmanCurrentNodeIndex();
@@ -110,7 +115,7 @@ public class MsPacMan extends PacmanController {
 									}
 								}
 							}
-							
+
 							//If there will not be a new option, go towards the farthest ghost and continue for next moves
 							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(nearGhosts.get(nearGhosts.size()-1)), DM.PATH);
 							carryOn = true;
@@ -119,23 +124,26 @@ public class MsPacMan extends PacmanController {
 					//If there is a "safe" path
 					else {
 						carryOn = false;
-						
+
 						//Moves towards the power pill if no ghosts in direction
 						nearestPowP = findNearestPowerPill(game);
 						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, DM.PATH);
 						for(int i = 0; i < fin+1; i++)
 							if(move == allMoves[i])
 								return move;
-						
+
 						//Moves towards the power pill if no ghosts in direction
 						nearestP = findNearestPill(game);
 						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
 						for(int i = 0; i < fin+1; i++)
 							if(move == allMoves[i])
 								return move;
-						
+
 						//If non of the above are possible, decide a move randomly
 						move = allMoves[rnd.nextInt(fin+1)];
+						for(int i = 0; i < fin+1; i++)
+							if(move == allMoves[i])
+								return move;
 					}
 				}
 
@@ -210,7 +218,7 @@ public class MsPacMan extends PacmanController {
 			}
 		}
 
-		// should sort ghosts from closest to farthest
+		//Should sort ghosts from closest to farthest
 		nearGhosts.sort((g1, g2)->{
 			if(getGhostDistFromPacman(game, g1) == getGhostDistFromPacman(game, g2))
 				return 0;
@@ -220,14 +228,16 @@ public class MsPacMan extends PacmanController {
 		return ghostT;
 	}
 
+	//Gets distance from Pacman to a ghost
 	private double getGhostDistFromPacman(Game game, GHOST ghost) {
 		return game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghost), DM.PATH);
 	}
 
+	//Finds safe paths in between the possible moves
 	private int findAllSafePaths(Game game, GHOST ghType, int fin) {
 		int ini = 0;
 		while(ini <= fin) {
-			//Si me acerco a un fantasma, descarto el movimiento como posible
+			//If I get closer to a ghost, is not a safe path
 			if(getGhostDistFromPacman(game, ghType) > 
 			game.getDistance(game.getNeighbour(game.getPacmanCurrentNodeIndex(), allMoves[ini]), game.getGhostCurrentNodeIndex(ghType), DM.PATH)) {
 
