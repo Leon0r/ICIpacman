@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c1920.practica0.grupoYY;
+package es.ucm.fdi.ici.c1920.practica0.grupo4;
 
 import pacman.game.Constants.DM; //DM: PATH, EUCLID, MANHATTAN
 import pacman.game.Constants.GHOST;
@@ -79,7 +79,7 @@ public class MsPacMan extends PacmanController {
 
 							for(MOVE m : allMoves) {
 								int index = game.getPacmanCurrentNodeIndex();
-								// busca salida en los pasillos posibles una casilla por delante en esa dirección
+								// busca salida en los pasillos posibles una casilla por delante en esa direcciï¿½n
 								for(int i = 0; i < 5; i++) {
 									index = game.getNeighbour(index, m) != -1? game.getNeighbour(index, m) : index;
 									MOVE[] movesP = game.getPossibleMoves(index, m);
@@ -96,21 +96,21 @@ public class MsPacMan extends PacmanController {
 					// if there is a "safe" path
 					else {
 						carryOn = false;
-						// va a por power pill
+						// Moves towards the power pill if no ghosts in direction
 						nearestPowP = findNearestPowerPill(game);
-
 						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, DM.PATH);
-						for(int i =0; i<fin+1;i++)
+						for(int i = 0; i < fin+1; i++)
 							if(move == allMoves[i])
 								return move;
-						// busca la pill mas cercana
+						
+						// Moves towards the power pill if no ghosts in direction
 						nearestP = findNearestPill(game);
-						// se mueve hacia ella si no es un suicidio
 						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
-						for(int i =0; i<fin+1;i++)
+						for(int i = 0; i < fin+1; i++)
 							if(move == allMoves[i])
 								return move;
-						// si no, random de lo que pueda moverse
+						
+						// If non of the above are possible, decide a move randomly
 						move = allMoves[rnd.nextInt(fin+1)];
 					}
 				}
@@ -217,19 +217,6 @@ public class MsPacMan extends PacmanController {
 		return fin;
 	}
 
-	private MOVE getMoveTowardsNearestPowerPill(Game game) {
-		// movement towards nearest powerpill
-		int nearestPowP = findNearestPowerPill(game);
-		MOVE move, mov;
-
-		if(nearestPowP != -1) {
-			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, DM.PATH);
-
-			// TO DO: evitar todos los fantasmas si se puede
-			if(move == mov) {
-				move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostT), DM.PATH);
-			}
-		}
-	}
+}
 
 

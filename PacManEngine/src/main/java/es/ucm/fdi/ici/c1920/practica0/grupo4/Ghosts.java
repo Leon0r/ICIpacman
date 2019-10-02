@@ -1,6 +1,6 @@
 //ICI Grupo13 Marcos Garcia Garcia y Rodrigo Manuel Perez Ruiz
 
-package es.ucm.fdi.ici.c1920.practica0.grupo13;
+package es.ucm.fdi.ici.c1920.practica0.grupo4;
 
 import java.util.EnumMap;
 import java.util.Vector;

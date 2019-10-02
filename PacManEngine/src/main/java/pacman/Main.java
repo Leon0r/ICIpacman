@@ -1,7 +1,7 @@
 package pacman;
 
-import es.ucm.fdi.ici.c1920.practica0.grupoYY.Ghosts;
-import es.ucm.fdi.ici.c1920.practica0.grupoYY.MsPacMan;
+import es.ucm.fdi.ici.c1920.practica0.grupo4.Ghosts;
+import es.ucm.fdi.ici.c1920.practica0.grupo4.MsPacMan;
 import pacman.controllers.Controller;
 import pacman.controllers.GhostController;
 import pacman.controllers.GhostsAgressive;
