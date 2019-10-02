@@ -1,8 +1,9 @@
 //ICI Grupo13 Marcos Garcia Garcia y Rodrigo Manuel Perez Ruiz
 
-package es.ucm.fdi.ici.c1920.practica0.grupoYY;
+package es.ucm.fdi.ici.c1920.practica0.grupo13;
 
 import java.util.EnumMap;
+import java.util.Vector;
 import java.util.Random;
 
 import pacman.game.Game;
@@ -24,7 +25,7 @@ public final class Ghosts extends GhostController{
 	double limitNearPacmanEdible = 20;
 	
 	
-	public int getAheadPacmanNode(Game game) {
+	public int getAheadPacmanNode(Game game, GHOST ghostType) {
 		MOVE lastMove = game.getPacmanLastMoveMade();
 		
 		int [] neighbours = game.getNeighbouringNodes(game.getPacmanCurrentNodeIndex(), lastMove);
@@ -70,39 +71,121 @@ public final class Ghosts extends GhostController{
 		if(result!=-1)
 			return result;
 		
-		// TODO: Si no puede ir al punto mas delante de pacman, decide otro en funcion de X (DE MOMENTO RANDOM, REVISAR)
-		/*
+		// TODO: Si no puede ir al punto mas delante de pacman, decide otro en funcion de la cantidad de pills que haya 
+		// A un lado y al otro
+		int [] pills = game.getActivePillsIndices();
+		
+		int Y = game.getNodeYCood(game.getGhostCurrentNodeIndex(ghostType));
+		int X = game.getNodeXCood(game.getGhostCurrentNodeIndex(ghostType));
+		
+		
+		int pillsUp = 0;
+		int pillsDown = 0;
+		int pillsLeft = 0;
+		int pillsRight = 0;
+		
 		switch (lastMove) {
 		case LEFT:
+			
+			for(int i = 0; i<pills.length; i++) {
+				
+				if (game.getNodeYCood(pills[i]) < Y)
+					pillsUp++;
+				else
+					pillsDown++;
+				
+			}
+			
+			if(pillsUp > pillsDown)
+				result = down;
+			else
+				result = up;
+			
 			break;
 			
 		case RIGHT:
+			
+			for(int i = 0; i<pills.length; i++) {
+				
+				if (game.getNodeYCood(pills[i]) < Y)
+					pillsUp++;
+				else
+					pillsDown++;
+				
+			}
+			
+			if(pillsUp > pillsDown)
+				result = down;
+			else
+				result = up;
 			break;
 			
 		case DOWN:
+			for(int i = 0; i<pills.length; i++) {
+				
+				if (game.getNodeXCood(pills[i]) < X)
+					pillsLeft++;
+				else
+					pillsRight++;
+				
+			}
+			
+			if(pillsLeft > pillsRight)
+				result = left;
+			else
+				result = right;
 			break;
 			
 		case UP:
 			break;
 		}
-		*/
 		
-		result = neighbours[rnd.nextInt(neighbours.length)];
+		if(result == -1)
+			result = neighbours[rnd.nextInt(neighbours.length)];
+		
 		return result;
 	}
 	
-	public int getAreaNode(GHOST ghostType) {
+	public int getAreaNode(GHOST ghostType, Game game) {
+		
+		int[] powerPillIndices = game.getActivePowerPillsIndices();
+		
+		Vector<Integer> ghosts = new Vector(0,1); 
+		
+		for(int k = 0; k < powerPillIndices.length && k<4; k++) {
+			ghosts.add(powerPillIndices[k]);
+		}
+		
+		if(ghosts.size() < 4) {
+			int[] powerPillDownIndices = game.getPowerPillIndices();
+			
+			boolean skip = false;
+			
+			for(int h = 0; h<powerPillDownIndices.length && ghosts.size() < 4; h++) {
+				skip = false;
+				for(int j = 0; j<ghosts.size(); j++) {
+					
+					if(!skip) {
+						if(powerPillDownIndices[h] == ghosts.elementAt(j))
+							skip= true;						
+					}				
+				}
+				
+				if(!skip)
+					ghosts.add(powerPillDownIndices[h]);
+			}
+		}
 		
 		switch (ghostType) {
 		
 		case BLINKY:
-			return 1089;
+			return ghosts.elementAt(0);
 		case INKY:
-			return 1040;
+			return ghosts.elementAt(1);
 		case PINKY:
-			return 78;
+			return ghosts.elementAt(2);
 		case SUE:
-			return 120;
+			return ghosts.elementAt(3);
 		}
 		
 		return 0;
@@ -146,12 +229,21 @@ public final class Ghosts extends GhostController{
 				}
 				else if(game.isGhostEdible(ghostType)) // Si me pueden comer, miro si estoy cerca de mi zona y de pacman
 				{
-					int node = getAreaNode(ghostType);
+					int node = getAreaNode(ghostType, game);
 					
 					double dToPac = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostType), DM.EUCLID);
 					double dToAreaNode = game.getDistance(game.getPacmanCurrentNodeIndex(), node, DM.EUCLID);
 					
-					if(dToAreaNode > limitNearZone) { // Vamos a nuestra zona
+					if(dToPac < limitNearPacMan) {
+						moves.put(
+								ghostType, 
+								game.getApproximateNextMoveAwayFromTarget(
+										game.getGhostCurrentNodeIndex(ghostType),
+										game.getPacmanCurrentNodeIndex(), 
+										game.getGhostLastMoveMade(ghostType), 
+										DM.EUCLID ));
+					}
+					else if(dToAreaNode > limitNearZone) { // Vamos a nuestra zona
 						moves.put(
 								ghostType, 
 								game.getApproximateNextMoveTowardsTarget(
@@ -168,7 +260,7 @@ public final class Ghosts extends GhostController{
 					else {	// Si estamos en la zona y cerca de pacman nos alejamos de él
 						moves.put(
 								ghostType, 
-								game.getApproximateNextMoveTowardsTarget(
+								game.getApproximateNextMoveAwayFromTarget(
 										game.getGhostCurrentNodeIndex(ghostType),
 										game.getPacmanCurrentNodeIndex(), 
 										game.getGhostLastMoveMade(ghostType), 
@@ -204,7 +296,7 @@ public final class Ghosts extends GhostController{
 						else 
 						{
 							
-							int pmNodeIndex = getAheadPacmanNode(game);
+							int pmNodeIndex = getAheadPacmanNode(game,ghostType);
 							
 							moves.put(
 									ghostType, 
@@ -220,6 +312,5 @@ public final class Ghosts extends GhostController{
 		}
 		
 	return moves;
-	}
-	
+	}	
 }
