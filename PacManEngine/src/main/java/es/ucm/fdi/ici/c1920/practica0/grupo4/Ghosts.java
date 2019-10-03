@@ -1,4 +1,4 @@
-//ICI Grupo13 Marcos Garcia Garcia y Rodrigo Manuel Perez Ruiz
+// ICI Grupo4 Marcos Garcia Garcia, Rodrigo Manuel Perez Ruiz, Leonor Cuesta Molinero y Esther Ruiz-Capillas
 
 package es.ucm.fdi.ici.c1920.practica0.grupo4;
 
@@ -12,6 +12,29 @@ import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 
+/*
+COMPORTAMIENTO DE LOS FANTASMAS
+
+Estrategias:
+
+	- Ataque: Dos de los fantasmas atacaran a Ms PacMan de forma similar a la practica 0, persiguiendola. Sin embargo,
+			  los otros dos intentaran perseguir el siguiente punto hacia donde Ms PacMan se movera (cuando no sea
+			  posible ir hacia alli, eligira uno de los otros nodos a los que podria moverse en funcion de la cantidad de
+			  pills que haya mas cerca de estos). De esta forma, se produciran "encerronas", es decir, que los fantasmas
+			  conseguiran dejar a Ms PacMan sin escapatoria en un "callejon". Cuando estos fantasmas estan ya muy cerca de
+			  Ms PacMan, simplemente la perseguiran a esta. Esto imita un comportamiento similar del juego original.
+
+	- Prevenir: Cuando los fantasmas detecten que Ms PacMan se encuentra demasiado cerca de una power pill, estos
+				simplemente se alejaran de esta, como en la practica 0.
+	
+	- Huida: Cuando los fantasmas sean comestibles intentaran huir de Ms PacMan hacia sus distintas zonas, como ocurre en el
+			 juego original. Estas zonas coinciden con las posiciones de las power pills. En el caso de que hubiese un mayor
+			 numero de power pills que de fantasmas, se repartiran estas posiciones priorizando las de las power pills que
+			 se encuentren activas. Cuando los fantasmas entren a estas "zonas", se moveran de forma aleatoria. Sin embargo,
+			 esta estrategia puede ser interrumpida si Ms PacMan esta demasiado cerca. En este caso, huiran de ella de forma
+			 similar a la practica 0. Esto evitara que los fantasmas se dirijan hacia Ms PacMan de forma accidental.
+*/
+
 public final class Ghosts extends GhostController{
 
 	private EnumMap<GHOST, MOVE> moves = new EnumMap<GHOST, MOVE>(GHOST.class);
@@ -24,7 +47,7 @@ public final class Ghosts extends GhostController{
 	double limitNearZone = 40;
 	double limitNearPacmanEdible = 20;
 	
-	
+	// Metodo que devuelve el nodo delantero de PacMan o el mas "interesante" si este no es posible
 	public int getAheadPacmanNode(Game game, GHOST ghostType) {
 		MOVE lastMove = game.getPacmanLastMoveMade();
 		
@@ -71,7 +94,7 @@ public final class Ghosts extends GhostController{
 		if(result!=-1)
 			return result;
 		
-		// TODO: Si no puede ir al punto mas delante de pacman, decide otro en funcion de la cantidad de pills que haya 
+		// Si no es posible devolver el delantero...
 		// A un lado y al otro
 		int [] pills = game.getActivePillsIndices();
 		
@@ -146,6 +169,7 @@ public final class Ghosts extends GhostController{
 		return result;
 	}
 	
+	// Metodo que devuelve el nodo al que los fantasmas deben dirigirse cuando sean comestibles
 	public int getAreaNode(GHOST ghostType, Game game) {
 		
 		int[] powerPillIndices = game.getActivePowerPillsIndices();
@@ -191,11 +215,9 @@ public final class Ghosts extends GhostController{
 		return 0;
 	}
 	 
+	// Metodo que devuelve un movimiento siguiendo las estrategias descritas anteriormente
 	@Override
-	public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
-		//System.out.println("X: " + game.getNodeXCood(game.getPacmanCurrentNodeIndex()) + 
-			//			   "Y: " + game.getNodeYCood(game.getPacmanCurrentNodeIndex()));
-		
+	public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {		
 		System.out.println(game.getPacmanCurrentNodeIndex());
 		
 		moves.clear();
@@ -216,7 +238,7 @@ public final class Ghosts extends GhostController{
 		// Recorre todos los fantasmas
 		for(GHOST ghostType : GHOST.values()) {
 			if(game.doesGhostRequireAction(ghostType)) {
-				if(dangerPacMan) { // Si hay peligro por que PC está muy cerca de una power pill
+				if(dangerPacMan) { // Si hay peligro por que PC esta muy cerca de una power pill
 					
 					moves.put(
 					ghostType, 
@@ -257,7 +279,7 @@ public final class Ghosts extends GhostController{
 								ghostType, 
 								allMoves[rnd.nextInt(allMoves.length)]);
 					}
-					else {	// Si estamos en la zona y cerca de pacman nos alejamos de él
+					else {	// Si estamos en la zona y cerca de pacman nos alejamos de el
 						moves.put(
 								ghostType, 
 								game.getApproximateNextMoveAwayFromTarget(
