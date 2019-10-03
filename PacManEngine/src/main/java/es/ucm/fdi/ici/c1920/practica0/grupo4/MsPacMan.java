@@ -23,8 +23,18 @@ import pacman.game.Game;
  *	- Evasión:
  *		- Un fantasma: si un solo fantasma se encuentra cerca de MsPacman busca caminos que le alejen de él,
  *					   priorizando los que le lleven a las pills más cercanas
+ *		
+ *		- 2 o más fantasmas: si más de un fantasma se encuentra cerca, trata de huir de todos 
+ *							 buscando los caminos que le alejen de ellos, priorizando fantasmas comestibles, luego power pills,
+ *							 pills y por último, random entre los posibles
  *
- *	- Ataque: si hay fantasmas comestibles cerca, se dirigirá hacia ellos tratando de comerselos.
+ *		- Acorralado: si todos los movimientos posibles le acercan a un fantasma, tratará de ir a por el primer 
+ *							 fantasma comestible. Si no encuentra, tratará de ver si está cerca de algún cruce en cualquier dirección 
+ *							 y se dirigirá a él. En el peor de los casos y hallarse acorralado, irá hacia el fantasma más lejano 
+ *							 esperando hallar algún camino alternativo entremedias, bloqueando el movimiento hacia él hasta hallar una
+ *							 nueva ruta.
+ *
+ *	- Ataque: si hay fantasmas comestibles cerca, se dirigirá hacia ellos tratando de comerselos, priorizandoles sobre las pills
  *
  *	- Recolección: si no encuentra fantasmas cerca, irá a por las pills más cercanas 
  * 
@@ -78,9 +88,7 @@ public class MsPacMan extends PacmanController {
 						//Find nearest pill and do the move if it is safe
 						nearestP = findNearestPill(game);
 						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
-						for(int i = 0; i < fin+1; i++)
-							if(move == allMoves[i])
-								return move;
+						if(!moveIsSuicide(game, move, fin)) return move;
 
 						//If the move is not possible, get a possible one randomly
 						move = allMoves[rnd.nextInt(fin+1)];
@@ -89,11 +97,12 @@ public class MsPacMan extends PacmanController {
 				//If there is more than one ghost following
 				else {					
 					//Find safe paths and save edible ghosts
+					fin = findAllSafePaths(game);
 					for(GHOST ghType : nearGhosts) {
 						if(game.isGhostEdible(ghType))
 							edibleG.add(ghType);
 					}
-					fin = findAllSafePaths(game);
+
 
 					//If there are no safe paths
 					if(fin == -1) {
@@ -101,9 +110,7 @@ public class MsPacMan extends PacmanController {
 						if(carryOn) {							
 							//If possible, do the last move made
 							move = game.getPacmanLastMoveMade();
-							for(int i = 0; i < fin+1; i++)
-								if(move == allMoves[i])
-									return move;
+							if(!moveIsSuicide(game, move, fin)) return move;
 
 							//If the move is not possible, get a possible one randomly
 							carryOn = false;
@@ -114,14 +121,7 @@ public class MsPacMan extends PacmanController {
 						else {
 							//If any of the ghosts surrounding me is edible, go towards it
 							if(!edibleG.isEmpty()) {
-								Iterator<GHOST> it = edibleG.iterator();
-								do{
-									move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(it.next()), DM.PATH);
-									for(MOVE m : allMoves) {
-										if(move==m)
-											return move;
-									}
-								}while(it.hasNext()); 
+								return moveTowardsEdibleGhost(game, edibleG);
 							}
 
 							//If any of the ghosts are edible, look if there will be new options two cells ahead in all the possible moves
@@ -146,25 +146,28 @@ public class MsPacMan extends PacmanController {
 					else {
 						carryOn = false;
 
+						//If any of the ghosts surrounding me is edible, go towards it (if it doesn't go though a non edible one)
+						if(!edibleG.isEmpty()) {
+							move = moveTowardsEdibleGhost(game, edibleG);
+							if(!moveIsSuicide(game, move, fin)) return move;
+
+						}
+
 						//Moves towards the power pill if no ghosts in direction
 						nearestPowP = findNearestPowerPill(game);
-						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, DM.PATH);
-						for(int i = 0; i < fin+1; i++)
-							if(move == allMoves[i])
-								return move;
-
+						if(nearestPowP != -1) {
+							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestPowP, DM.PATH);
+							if(!moveIsSuicide(game, move, fin)) return move;
+						}
 						//Moves towards the power pill if no ghosts in direction
 						nearestP = findNearestPill(game);
-						move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
-						for(int i = 0; i < fin+1; i++)
-							if(move == allMoves[i])
-								return move;
-
+						if(nearestP != -1) {
+							move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
+							if(!moveIsSuicide(game, move, fin)) return move;
+						}
 						//If non of the above are possible, decide a move randomly
 						move = allMoves[rnd.nextInt(fin+1)];
-						for(int i = 0; i < fin+1; i++)
-							if(move == allMoves[i])
-								return move;
+						if(!moveIsSuicide(game, move, fin)) return move;
 					}
 				}
 
@@ -174,6 +177,14 @@ public class MsPacMan extends PacmanController {
 		else {
 			nearestP = findNearestPill(game);
 			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
+
+			// TO DO: esquivar las powerpills 
+			/*nearestPowP = findNearestPowerPill(game);
+
+			if(nearestP-4 == nearestPowP)
+				move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
+			else
+				move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
 
 			/*int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
 			if(index != -1) {
@@ -264,8 +275,9 @@ public class MsPacMan extends PacmanController {
 		for(GHOST ghType : nearGhosts) {
 			ini = 0;
 			while(ini <= end) {
-				//If I get closer to a ghost, is not a safe path
-				if(getGhostDistFromPacman(game, ghType) > 
+
+				//If I get closer to a non edible ghost, is not a safe path
+				if(!game.isGhostEdible(ghType) && getGhostDistFromPacman(game, ghType) > 
 				game.getDistance(game.getNeighbour(game.getPacmanCurrentNodeIndex(), allMoves[ini]), game.getGhostCurrentNodeIndex(ghType), DM.PATH)) {
 
 					aux = allMoves[end];
@@ -280,4 +292,27 @@ public class MsPacMan extends PacmanController {
 
 	}
 
+	// Returns move towards edible ghost when completely surrounded
+	// NEUTRAL if none
+	private MOVE moveTowardsEdibleGhost(Game game, List<GHOST> edibleG) {
+		Iterator<GHOST> it = edibleG.iterator();
+		MOVE move;
+		do{
+			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(it.next()), DM.PATH);
+			for(MOVE m : allMoves) {
+				if(move==m)
+					return move;
+			}
+		}while(it.hasNext());
+		return MOVE.NEUTRAL;
+	}
+
+	// true if the move to be made is going closer to a ghost
+	private boolean moveIsSuicide(Game game, MOVE move, int fin){
+		for (int i=0; i<fin+1;i++) {
+			if(move == allMoves[i])
+				return false;
+		}
+		return true;
+	}
 }
