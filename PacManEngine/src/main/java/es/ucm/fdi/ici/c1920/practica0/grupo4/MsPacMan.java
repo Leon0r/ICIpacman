@@ -20,23 +20,23 @@ import pacman.game.Game;
  *
  *Estrategias:
  *
- *	- Evasión:
- *		- Un fantasma: si un solo fantasma se encuentra cerca de MsPacman busca caminos que le alejen de él,
- *					   priorizando los que le lleven a las pills más cercanas
+ *	- Evasiï¿½n:
+ *		- Un fantasma: si un solo fantasma se encuentra cerca de MsPacman busca caminos que le alejen de ï¿½l,
+ *					   priorizando los que le lleven a las pills mï¿½s cercanas
  *		
- *		- 2 o más fantasmas: si más de un fantasma se encuentra cerca, trata de huir de todos 
+ *		- 2 o mï¿½s fantasmas: si mï¿½s de un fantasma se encuentra cerca, trata de huir de todos 
  *							 buscando los caminos que le alejen de ellos, priorizando fantasmas comestibles, luego power pills,
- *							 pills y por último, random entre los posibles
+ *							 pills y por ï¿½ltimo, random entre los posibles
  *
- *		- Acorralado: si todos los movimientos posibles le acercan a un fantasma, tratará de ir a por el primer 
- *							 fantasma comestible. Si no encuentra, tratará de ver si está cerca de algún cruce en cualquier dirección 
- *							 y se dirigirá a él. En el peor de los casos y hallarse acorralado, irá hacia el fantasma más lejano 
- *							 esperando hallar algún camino alternativo entremedias, bloqueando el movimiento hacia él hasta hallar una
+ *		- Acorralado: si todos los movimientos posibles le acercan a un fantasma, tratarï¿½ de ir a por el primer 
+ *							 fantasma comestible. Si no encuentra, tratarï¿½ de ver si estï¿½ cerca de algï¿½n cruce en cualquier direcciï¿½n 
+ *							 y se dirigirï¿½ a ï¿½l. En el peor de los casos y hallarse acorralado, irï¿½ hacia el fantasma mï¿½s lejano 
+ *							 esperando hallar algï¿½n camino alternativo entremedias, bloqueando el movimiento hacia ï¿½l hasta hallar una
  *							 nueva ruta.
  *
- *	- Ataque: si hay fantasmas comestibles cerca, se dirigirá hacia ellos tratando de comerselos, priorizandoles sobre las pills
+ *	- Ataque: si hay fantasmas comestibles cerca, se dirigirï¿½ hacia ellos tratando de comerselos, priorizandoles sobre las pills
  *
- *	- Recolección: si no encuentra fantasmas cerca, irá a por las pills más cercanas 
+ *	- Recolecciï¿½n: si no encuentra fantasmas cerca, irï¿½ a por las pills mï¿½s cercanas 
  * 
  */
 
@@ -125,7 +125,7 @@ public class MsPacMan extends PacmanController {
 							}
 
 							//If any of the ghosts are edible, look if there will be new options two cells ahead in all the possible moves
-							for(MOVE m : allMoves) {//TO DO: Se come a los fantasmas si la predicción les sobrepasa
+							for(MOVE m : allMoves) {//TO DO: Se come a los fantasmas si la predicciï¿½n les sobrepasa
 								index = game.getPacmanCurrentNodeIndex();
 								for(int i = 0; i < 4; i++) {
 									index = game.getNeighbour(index, m) != -1? game.getNeighbour(index, m) : index;
@@ -178,15 +178,16 @@ public class MsPacMan extends PacmanController {
 			nearestP = findNearestPill(game);
 			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
 
-			// TO DO: esquivar las powerpills 
-			/*nearestPowP = findNearestPowerPill(game);
+			/*// TO DO: esquivar las powerpills 
+			nearestPowP = findNearestPowerPill(game);
 
 			if(nearestP-4 == nearestPowP)
 				move = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
 			else
 				move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), nearestP, DM.PATH);
+			 */
 
-			/*int index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
+			/*index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
 			if(index != -1) {
 				if(game.getPowerPillIndex(index) != -1) {//If it is a powerPill
 					if(!powerPill) {
@@ -270,9 +271,23 @@ public class MsPacMan extends PacmanController {
 	private int findAllSafePaths(Game game) {
 		int ini;
 		int end = allMoves.length - 1;
+		int index;
+		MOVE move;
 		MOVE aux; 
 
-		for(GHOST ghType : nearGhosts) {
+		for(MOVE m : allMoves) {
+			index = game.getPacmanCurrentNodeIndex();
+			index = game.getNeighbour(index, m);
+			if(index != -1) {
+				MOVE[] movesP = game.getPossibleMoves(index, m);
+				if(movesP.length>1) {
+					move = m;	
+					return move;
+				}
+			}
+		}
+
+		/*for(GHOST ghType : nearGhosts) {
 			ini = 0;
 			while(ini <= end) {
 
@@ -287,9 +302,8 @@ public class MsPacMan extends PacmanController {
 				}else
 					ini++;
 			}
-		}
+		}*/
 		return end;
-
 	}
 
 	// Returns move towards edible ghost when completely surrounded
