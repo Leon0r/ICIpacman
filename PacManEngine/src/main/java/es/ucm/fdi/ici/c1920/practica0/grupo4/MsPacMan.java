@@ -168,7 +168,7 @@ public class MsPacMan extends PacmanController {
 
 		pathData.clear();
 		ghostIndx.clear();
-		
+
 		// finds ghosts current position (non edible ones only)
 		for(GHOST g: GHOST.values())
 			if(!game.isGhostEdible(g))
@@ -201,11 +201,13 @@ public class MsPacMan extends PacmanController {
 				}
 				else 
 					carryOn = false;
-
 			}
 
+
+
+
 			pathData.put(m,new int[3]);
-			pathData.get(m)[0] = isPathSafe(game, nextM, movCount, index) ? 1 : 0;
+			pathData.get(m)[0] = isPathSafe(game, nextM, movCount + 5, index) ? 1 : 0;
 			pathData.get(m)[1] = isTherePowPill ? 1 : 0;
 			pathData.get(m)[2] = numPills;
 
@@ -221,22 +223,22 @@ public class MsPacMan extends PacmanController {
 	}
 
 	private boolean isPathSafe(Game game, MOVE dir, int numTick, int index) {
-		boolean isSafe = true;
-		MOVE[] moves = game.getPossibleMoves(index, dir);
+		boolean isSafe = true; 
+		MOVE[] moves = game.getPossibleMoves(index, dir); 
 
-		if(numTick > 0) {
-			for(MOVE m : moves) {
-				if(ghostIndx.contains(game.getNeighbour(index, m)))
+		if(numTick > 0) { 
+			for(MOVE m : moves) { 
+				if(ghostIndx.contains(game.getNeighbour(index, m))) 
 
-					return false;
-				else {
-					isSafe = (isSafe && isPathSafe(game, m, numTick - 1, game.getNeighbour(index, m)));
-					if(!isSafe)
-						return false;
-				}
-			}
-		}
-		return isSafe;
+					return false; 
+				else { 
+					isSafe = (isSafe && isPathSafe(game, m, numTick - 1, game.getNeighbour(index, m))); 
+					if(!isSafe) 
+						return false; 
+				} 
+			} 
+		} 
+		return isSafe; 
 	}
 
 	private MOVE pathWithMorePills(Game game, boolean alsoIsSafe) {
@@ -253,7 +255,7 @@ public class MsPacMan extends PacmanController {
 		if(numP == 0)
 			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), findNearestPill(game), game.getPacmanLastMoveMade(), DM.PATH);
 
-			return move;
+		return move;
 	}
 
 	private MOVE pathWithPowerPills(boolean alsoIsSafe) {
