@@ -69,7 +69,7 @@ public class MsPacMan extends PacmanController {
 
 		// if there are no ghosts following
 		if(nearGhosts.isEmpty()) {
-			move = pathWithMorePills(true);
+			move = pathWithMorePills(game, true);
 		}	
 		//If there is at least one ghost following
 		else {
@@ -80,10 +80,10 @@ public class MsPacMan extends PacmanController {
 					if(pathWithPowerPills(false) != null)
 						move = pathWithPowerPills(false);
 					else 
-						move = pathWithMorePills(false);						
+						move = pathWithMorePills(game, false);						
 				}
 				else {
-					move = pathWithMorePills(true);
+					move = pathWithMorePills(game, true);
 				}
 			}
 			//If there is more than one ghost following
@@ -99,7 +99,7 @@ public class MsPacMan extends PacmanController {
 					if(pathWithPowerPills(false) != null)
 						move = pathWithPowerPills(false);
 					else 
-						move = pathWithMorePills(false);
+						move = pathWithMorePills(game, false);
 				}
 				//If there is a "safe" path
 				else {
@@ -118,7 +118,7 @@ public class MsPacMan extends PacmanController {
 					}
 
 					//Moves towards the power pill if no ghosts in direction
-					move = pathWithMorePills(true);
+					move = pathWithMorePills(game, true);
 				}
 			}
 		}
@@ -167,7 +167,8 @@ public class MsPacMan extends PacmanController {
 		boolean carryOn = true;
 
 		pathData.clear();
-
+		ghostIndx.clear();
+		
 		// finds ghosts current position (non edible ones only)
 		for(GHOST g: GHOST.values())
 			if(!game.isGhostEdible(g))
@@ -180,10 +181,12 @@ public class MsPacMan extends PacmanController {
 			movCount = 0;
 			numPills = 0;
 			isTherePowPill = false;
+			carryOn = true;
+			index = game.getNeighbour(game.getPacmanCurrentNodeIndex(), m);
 
 			while(carryOn) {
 				if(index != -1) {
-					MOVE[] aux = game.getPossibleMoves(index);
+					MOVE[] aux = game.getPossibleMoves(index, nextM);
 					if(aux.length == 1) {
 						if(game.getPillIndex(index)!= -1)
 							numPills = numPills + 1;
@@ -236,7 +239,7 @@ public class MsPacMan extends PacmanController {
 		return isSafe;
 	}
 
-	private MOVE pathWithMorePills(boolean alsoIsSafe) {
+	private MOVE pathWithMorePills(Game game, boolean alsoIsSafe) {
 		MOVE move = null;
 		int numP = -1;
 
@@ -246,7 +249,11 @@ public class MsPacMan extends PacmanController {
 				move = m;
 			}
 		}
-		return move;
+
+		if(numP == 0)
+			move = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), findNearestPill(game), game.getPacmanLastMoveMade(), DM.PATH);
+
+			return move;
 	}
 
 	private MOVE pathWithPowerPills(boolean alsoIsSafe) {
@@ -296,20 +303,20 @@ public class MsPacMan extends PacmanController {
 
 	}
 
-	/*
-	 * // returns nearest pill node index or -1 if none
-	 * private int findNearestPill(Game game) {
-	 * 		int nearestP = -1;
-	 * 		double distance, nearestD = -1;
-	 * 
-	 * 		for(int pill : game.getActivePillsIndices()) {
-	 * 			distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, DM.PATH);
-	 * 			if(nearestP == -1 || distance <= nearestD) {
-	 * 				nearestD = distance;
-	 * 				nearestP = pill;
-	 * 			}
-	 * 		}
-	 * 		return nearestP;
-	 * 	}
-	 */
+
+	// returns nearest pill node index or -1 if none
+	private int findNearestPill(Game game) {
+		int nearestP = -1;
+		double distance, nearestD = -1;
+
+		for(int pill : game.getActivePillsIndices()) {
+			distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, DM.PATH);
+			if(nearestP == -1 || distance <= nearestD) {
+				nearestD = distance;
+				nearestP = pill;
+			}
+		}
+		return nearestP;
+	}
+
 }
