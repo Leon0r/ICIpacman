@@ -68,7 +68,7 @@ public class MsPacMan extends PacmanController {
 		numSafePath = findAllPathData(game);
 
 		// if there are no ghosts following
-		if(nearGhosts.isEmpty()) {
+		if(nearGhosts.isEmpty() && numSafePath > 0) {
 			move = pathWithMorePills(game, true);
 		}	
 		//If there is at least one ghost following
@@ -163,6 +163,9 @@ public class MsPacMan extends PacmanController {
 		int numPills = 0;
 		int numSafePath = 0;
 		boolean isTherePowPill;
+		int[] activePills;
+		int i;
+		boolean found;
 
 		boolean carryOn = true;
 
@@ -188,7 +191,16 @@ public class MsPacMan extends PacmanController {
 				if(index != -1) {
 					MOVE[] aux = game.getPossibleMoves(index, nextM);
 					if(aux.length == 1) {
-						if(game.getPillIndex(index)!= -1)
+						activePills = game.getActivePillsIndices();
+						found = false;
+						i = 0;
+						while(!found && i < activePills.length) {
+							if(activePills[i] == index) {
+								found = true;
+							}
+							i++;
+						}
+						if(found)
 							numPills = numPills + 1;
 						if(game.getPowerPillIndex(index) != -1)
 							isTherePowPill = true;
@@ -246,7 +258,7 @@ public class MsPacMan extends PacmanController {
 		int numP = -1;
 
 		for(MOVE m : pathData.keySet()) {
-			if((!alsoIsSafe || pathData.get(m)[0] == 1) && (numP == -1 || numP < pathData.get(m)[2])) {
+			if((!alsoIsSafe || pathData.get(m)[0] == 1) && (numP < pathData.get(m)[2])) {
 				numP = pathData.get(m)[2];
 				move = m;
 			}
