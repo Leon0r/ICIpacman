@@ -1,6 +1,6 @@
 // ICI Grupo4 Marcos Garcia Garcia, Rodrigo Manuel Perez Ruiz, Leonor Cuesta Molinero y Esther Ruiz-Capillas
 
-package es.ucm.fdi.ici.c1920.practica0.grupo4;
+package es.ucm.fdi.ici.c1920.practica1.grupo4;
 
 import pacman.game.Constants.DM; //DM: PATH, EUCLID, MANHATTAN
 import pacman.game.Constants.GHOST;
