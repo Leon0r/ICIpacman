@@ -1,39 +1,43 @@
 package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class StateEngineImpl implements StateEngine{
 
 	private State initialState;
 	private State currentState;
-	private Map<State, StateTransition> machine;
-	
-	
-	
+	private Map<State, ArrayList<StateTransition>> machine;
+
+
+
 	public StateEngineImpl() {
 		super();
-		machine = new HashMap<State, StateTransition>();
+		machine = new HashMap<State, ArrayList<StateTransition>>();
 	}
-	
+
 
 	@Override
 	public StateEngine add(State oldState, Transition transition, State newState) throws IllegalStateException {
-		machine.put(oldState, new StateTransition(transition,newState) );
+		if(!machine.containsKey(oldState))
+			machine.put(oldState, new ArrayList<StateTransition>());
+		machine.get(oldState).add(new StateTransition(transition, newState));
 		return this;
 	}
 
 	@Override
 	public void done() throws IllegalStateException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
 	@Override
 	public void doIt(Input in, boolean debug) {
 		// Get StateTransition....
-		StateTransition[] statTrans = null;
+		ArrayList<StateTransition> statTrans = machine.get(currentState);
 		for(StateTransition st: statTrans)
 			if(st.getTransition().evaluate(in))
 			{
@@ -41,10 +45,10 @@ public class StateEngineImpl implements StateEngine{
 				this.currentState.execute();
 				return;
 			}
-		
+
 	}
 
-	
+
 	private class StateTransition{
 		private Transition transition;
 		private State newState;
@@ -65,8 +69,8 @@ public class StateEngineImpl implements StateEngine{
 			this.transition = transition;
 			this.newState = newState;
 		}
-		
-		
+
+
 	}
 
 
@@ -80,6 +84,6 @@ public class StateEngineImpl implements StateEngine{
 	@Override
 	public void setInitialState(State initialState) {
 		this.initialState = this.currentState = initialState;
-		
+
 	}
 }

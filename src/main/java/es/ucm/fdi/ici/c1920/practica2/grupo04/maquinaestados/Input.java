@@ -12,6 +12,7 @@ public class Input {
 	public void setDistancetoGhosts(double[] distancetoGhosts) {
 		this.distancetoGhosts = distancetoGhosts;
 	}
+	
 	public double getClosestPowerPill() {
 		return closestPowerPill;
 	}
