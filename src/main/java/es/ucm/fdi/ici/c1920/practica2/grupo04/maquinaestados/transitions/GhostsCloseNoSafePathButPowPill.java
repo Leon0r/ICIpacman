@@ -3,11 +3,17 @@ package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.transitions;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Input;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Transition;
 
-public class GhostsCloseToMsPacMan implements Transition {
+public class GhostsCloseNoSafePathButPowPill implements Transition {
 
+	//GoToPowerPillNotSafe();
 	@Override
 	public boolean evaluate(Input in) {
-		//if(in.getDistancetoGhosts()..in.)
+		if(nearGhosts.size() > 1) {
+			if(numSafePath == 0) {					
+				if(pathWithPowerPills(false) != null)
+					return true;
+			}
+		}
 		return false;
 	}
 
