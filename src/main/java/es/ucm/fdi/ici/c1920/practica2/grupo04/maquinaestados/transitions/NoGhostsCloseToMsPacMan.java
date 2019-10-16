@@ -8,10 +8,11 @@ public class NoGhostsCloseToMsPacMan implements Transition {
 	//GoToPillSafe()
 	@Override
 	public boolean evaluate(Input in) {
-		if(nearGhosts.isEmpty()) {
-			return true;
-		}	
-		return false;
+		
+		for(double d : in.getDistancetoGhosts())
+			if(d < in.getDistanceLimit())
+				return false;
+		return true;
 	}
 
 }

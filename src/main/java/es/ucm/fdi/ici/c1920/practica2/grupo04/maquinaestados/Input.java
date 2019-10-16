@@ -4,7 +4,7 @@ public class Input {
 
 	private double[] distancetoGhosts;
 	private double closestPowerPill;
-	
+	private double distanceLimit; // Distance which is considered near
 	
 	public double[] getDistancetoGhosts() {
 		return distancetoGhosts;
@@ -19,7 +19,12 @@ public class Input {
 		this.closestPowerPill = closestPowerPill;
 	}
 	
-	
+	public double getDistanceLimit() {
+		return distanceLimit;
+	}
+	public void setDistanceLimit(double distanceLimit) {
+		this.distanceLimit = distanceLimit;
+	}
 	
 	
 	
