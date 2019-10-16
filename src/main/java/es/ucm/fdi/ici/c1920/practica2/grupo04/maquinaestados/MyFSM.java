@@ -1,6 +1,6 @@
 package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
 
-import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.actions.GoToPowerPill;
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.actions.GoToPowerPillSafe;
 
 public class MyFSM {
 
@@ -9,7 +9,7 @@ public class MyFSM {
 		
 		StateEngine stateEngine = new StateEngineImpl();
 		
-		State inicial = new State("GoToPowerPill", new GoToPowerPill());
+		State inicial = new State("GoToPowerPill", new GoToPowerPillSafe());
 
 		//stateEngine.add(oldState, transition, newState)
 		
