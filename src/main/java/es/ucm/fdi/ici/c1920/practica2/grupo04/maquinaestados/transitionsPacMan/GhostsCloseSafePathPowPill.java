@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.transitions;
+package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.transitionsPacMan;
 
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Input;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Transition;

@@ -5,11 +5,9 @@ public interface StateEngine {
 	public StateEngine add(State oldState, Transition transition, State newState) 
 		throws IllegalStateException;
 	
-	public void setInitialState(State initialState);
-	
-	public void done() throws IllegalStateException;
+	public void setInitialState(State initialState);	
 	
 	public State currentState();
 	
-	public void doIt(Input in, boolean debug);
+	public void checkChange(Input in, boolean debug);
 }

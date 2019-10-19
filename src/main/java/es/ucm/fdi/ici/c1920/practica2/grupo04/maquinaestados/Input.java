@@ -1,32 +1,22 @@
 package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
 
 public class Input {
-
-	private double[] distancetoGhosts;
-	private double closestPowerPill;
-	private double distanceLimit; // Distance which is considered near
 	
-	public double[] getDistancetoGhosts() {
-		return distancetoGhosts;
-	}
-	public void setDistancetoGhosts(double[] distancetoGhosts) {
-		this.distancetoGhosts = distancetoGhosts;
-	}
-	
-	public double getClosestPowerPill() {
-		return closestPowerPill;
-	}
-	public void setClosestPowerPill(double closestPowerPill) {
-		this.closestPowerPill = closestPowerPill;
-	}
-	
-	public double getDistanceLimit() {
-		return distanceLimit;
-	}
-	public void setDistanceLimit(double distanceLimit) {
-		this.distanceLimit = distanceLimit;
-	}
+	double distancePC;
+	boolean edible;
 	
 	
+	public double getDistancePC() {
+		return distancePC;
+	}
+	public void setDistancePC(double distancePC) {
+		this.distancePC = distancePC;
+	}
+	public boolean isEdible() {
+		return edible;
+	}
+	public void setEdible(boolean edible) {
+		this.edible = edible;
+	}
 	
 }

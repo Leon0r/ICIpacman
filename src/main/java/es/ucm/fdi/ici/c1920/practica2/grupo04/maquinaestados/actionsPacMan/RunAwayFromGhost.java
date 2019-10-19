@@ -1,8 +1,8 @@
-package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.actions;
+package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.actionsPacMan;
 
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Action;
 
-public class GoToGhost extends Action {
+public class RunAwayFromGhost extends Action {
 
 	public void executeAction() {
 		//this.game..

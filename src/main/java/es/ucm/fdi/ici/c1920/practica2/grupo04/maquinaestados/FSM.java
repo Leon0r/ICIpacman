@@ -5,5 +5,5 @@ import java.util.Map;
 public interface FSM {
 	public State getState();
 	
-	public void doIt(Input in);
+	public void checkChange(Input in);
 }

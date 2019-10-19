@@ -1,13 +1,14 @@
 package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
 
 import pacman.game.Game;
+import pacman.game.Constants.*;
 
 public abstract class Action {
 	
-	protected Game game;
+	protected Game g;
 	public void setGame(Game game)
 	{
-		this.game = game;
+		this.g = game;
 	}
-	public abstract void executeAction();
+	public abstract MOVE executeAction();
 }
