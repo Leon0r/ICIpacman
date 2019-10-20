@@ -1,14 +1,10 @@
-package pacman;
+package Main;
 
-import es.ucm.fdi.ici.c1920.practica0.grupo4.Ghosts;
+
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Ghosts;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.MsPacMan;
-import pacman.controllers.Controller;
+import pacman.Executor;
 import pacman.controllers.GhostController;
-import pacman.controllers.GhostsAgressive;
-import pacman.controllers.GhostsRandom;
-import pacman.controllers.HumanController;
-import pacman.controllers.KeyBoardInput;
-import pacman.controllers.MsPacmanController;
 import pacman.controllers.PacmanController;
 
 public class Main {

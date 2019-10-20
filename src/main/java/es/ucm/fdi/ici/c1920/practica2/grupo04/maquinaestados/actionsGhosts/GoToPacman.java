@@ -15,7 +15,7 @@ public class GoToPacman extends Action {
 	
 	public MOVE executeAction() {
 		
-		System.out.println("Ejecuto el gotopacman");
+		//System.out.println("Ejecuto el gotopacman");
 		
 		return g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(GHOST.values()[idx]), g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(GHOST.values()[idx]),  DM.EUCLID);		
 

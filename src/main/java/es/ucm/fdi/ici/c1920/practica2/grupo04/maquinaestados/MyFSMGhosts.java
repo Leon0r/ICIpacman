@@ -25,4 +25,6 @@ public class MyFSMGhosts extends FSMImpl{
 		stateEngine.add(inicial, new GhostEdible(), new State("FleeFromPacman", new FleeFromPacman(idx)));
 		
 	}
+	
+	
 }

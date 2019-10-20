@@ -1,5 +1,7 @@
 package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
 
+import pacman.game.Game;
+
 public class FSMImpl implements FSM {
 	
 	private boolean debug;
@@ -21,7 +23,10 @@ public class FSMImpl implements FSM {
 
 	@Override
 	public void checkChange(Input in) {
-		// TODO Auto-generated method stub
 		stateEngine.checkChange(in, debug);
+	}
+
+	@Override
+	public void setGame(Game game) {		
 	}
 }
