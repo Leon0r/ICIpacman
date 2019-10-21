@@ -18,6 +18,8 @@ public final class Condition {
 	public static boolean areManyGhostsNear(Input in) {
 		return in.getNearGhosts() > 0;
 	}
-	
+	public static boolean isGhostEdible(Input in) {
+		return in.getEdibleGhost();
+	}
 	
 }

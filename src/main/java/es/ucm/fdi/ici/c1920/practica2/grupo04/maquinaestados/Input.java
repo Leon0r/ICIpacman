@@ -1,14 +1,11 @@
 package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
 
-import pacman.game.Constants.DM;
-import pacman.game.Constants.GHOST;
-import pacman.game.Game;
-
 public class Input {
 	
 	double distancePC;
 	boolean edible;
 	int nearGhosts;
+	boolean edibleGhost;
 	
 	public double getDistancePC() {
 		return distancePC;
@@ -29,6 +26,13 @@ public class Input {
 	}
 	public void setNearGhosts(int nearGhosts) {
 		this.nearGhosts = nearGhosts;
+	}
+	
+	public boolean getEdibleGhost() {
+		return this.edibleGhost;
+	}
+	public void setEdibleGhost(boolean edibleGhost) {
+		this.edibleGhost = edibleGhost;
 	}
 	
 }

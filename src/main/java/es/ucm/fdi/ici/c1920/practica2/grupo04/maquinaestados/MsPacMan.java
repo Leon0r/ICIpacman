@@ -30,12 +30,18 @@ public class MsPacMan extends PacmanController {
 
 	private void updateInput(Game game) {
 
+		//Find number of near ghosts and save the edible one, if any
 		int nearGhosts = 0;
+		boolean edibleGhost = false;
 		for(GHOST gh : GHOST.values()) {
 			if(limit > game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gh), DM.PATH)) {
 				nearGhosts++;
+				if(game.isGhostEdible(gh))
+					edibleGhost = true;
 			}
 		}
 		in.setNearGhosts(nearGhosts);
+		in.setEdibleGhost(edibleGhost);
+		
 	}
 }
