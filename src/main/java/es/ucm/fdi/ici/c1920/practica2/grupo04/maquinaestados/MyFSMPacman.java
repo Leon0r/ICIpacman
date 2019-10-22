@@ -22,7 +22,7 @@ public class MyFSMPacman extends FSMImpl{
 		states = new ArrayList<State>();
 		actions = new ArrayList<Action>();
 		
-		State getPoints, Flee, eatGhost;
+		State getPoints, flee, eatGhost;
 		Action act;
 		
 		act =  new GoToPillSafe();
@@ -33,8 +33,8 @@ public class MyFSMPacman extends FSMImpl{
 		
 		act = new RunAwayFromGhost();
 		actions.add(act);		
-		Flee = new State("flee", act);
-		states.add(Flee);
+		flee = new State("flee", act);
+		states.add(flee);
 		
 		act = new GoToGhost();
 		actions.add(act);
@@ -42,10 +42,17 @@ public class MyFSMPacman extends FSMImpl{
 		states.add(eatGhost);
 		
 		//TO DO: Poner más complejos primero para que los compare antes
-		stateEngine.setInitialState(Flee);
+		stateEngine.setInitialState(flee);
+		
+		// desde getPoints
 		stateEngine.add(getPoints, new GhostsCloseSafePathGhostEdible(), eatGhost);
-		stateEngine.add(getPoints, new GhostsCloseToMsPacman(), Flee);
-		stateEngine.add(Flee, new NoGhostsCloseToMsPacMan(), getPoints);
+		stateEngine.add(getPoints, new GhostsCloseToMsPacman(), flee);
+		
+		// desde flee
+		stateEngine.add(flee, new NoGhostsCloseToMsPacMan(), getPoints);
+		
+		// desde eatGhost
+		stateEngine.add(eatGhost, new NoGhostsCloseToMsPacMan(), getPoints);
 		
 	}
 	

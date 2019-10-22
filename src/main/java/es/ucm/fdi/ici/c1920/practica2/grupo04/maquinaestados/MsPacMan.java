@@ -13,7 +13,7 @@ public class MsPacMan extends PacmanController {
 	FSM fsm = new MyFSMPacman(stateEngine);
 
 	double limit = 23;
-	
+
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
 
@@ -33,15 +33,37 @@ public class MsPacMan extends PacmanController {
 		//Find number of near ghosts and save the edible one, if any
 		int nearGhosts = 0;
 		boolean edibleGhost = false;
+		MOVE[] safeMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
+		int fin = safeMoves.length - 1;
+
 		for(GHOST gh : GHOST.values()) {
 			if(limit > game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gh), DM.PATH)) {
 				nearGhosts++;
 				if(game.isGhostEdible(gh))
 					edibleGhost = true;
+				else {
+					// esto es una mierda
+					MOVE mToGh = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gh), DM.PATH);
+					int i = 0;
+					while(i<= fin && safeMoves[i] != mToGh) {i++;}
+					if(i<=fin) {
+						mToGh = safeMoves[fin];
+						safeMoves[fin] = safeMoves[i];
+						safeMoves[i] = mToGh;
+						fin--;
+					}
+				}
 			}
 		}
+
 		in.setNearGhosts(nearGhosts);
 		in.setEdibleGhost(edibleGhost);
 		
+		// esto es una mierda
+		MOVE[] aux= new MOVE[fin+1];
+		for(int i = 0; i<=fin; i++)
+			aux[i] = safeMoves[i];
+		in.setSafeMovesPC(aux);
+
 	}
 }
