@@ -42,7 +42,7 @@ public class MsPacMan extends PacmanController {
 				if(game.isGhostEdible(gh))
 					edibleGhost = true;
 				else {
-					// esto es una mierda
+					// esto es una mierda, pero reordena los movimientos posibles poniendo los safe delante
 					MOVE mToGh = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gh), DM.PATH);
 					int i = 0;
 					while(i<= fin && safeMoves[i] != mToGh) {i++;}
@@ -58,12 +58,7 @@ public class MsPacMan extends PacmanController {
 
 		in.setNearGhosts(nearGhosts);
 		in.setEdibleGhost(edibleGhost);
-		
-		// esto es una mierda
-		MOVE[] aux= new MOVE[fin+1];
-		for(int i = 0; i<=fin; i++)
-			aux[i] = safeMoves[i];
-		in.setSafeMovesPC(aux);
+		in.setSafeMoves(safeMoves, fin); // se le pasa el fin tambien para asignarlo cutremente desde dentro
 
 	}
 }
