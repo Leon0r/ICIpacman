@@ -8,6 +8,6 @@ public class GhostsCloseSafePathGhostEdible implements Transition {
 	//GoToGhost()
 	@Override
 	public boolean evaluate(Input in) {
-		return Condition.isGhostEdible(in);
+		return Condition.isGhostEdible(in) && Condition.areManyGhostsNear(in);
 	}
 }

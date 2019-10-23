@@ -3,7 +3,7 @@ package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.actionsPacMan;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Action;
 import pacman.game.Constants.*;
 
-public class RunAwayFromGhost extends Action {
+public class OneGhostNear extends Action {
 
 	public MOVE executeAction() {
 		return g.getNextMoveAwayFromTarget(g.getPacmanCurrentNodeIndex(), g.getGhostCurrentNodeIndex(getClosestGhost()), DM.PATH);

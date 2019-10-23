@@ -25,18 +25,18 @@ public class MyFSMPacman extends FSMImpl{
 		State getPoints, flee, eatGhost;
 		Action act;
 		
-		act =  new GoToPillSafe();
+		act =  new NoGhosts();
 		actions.add(act);
 		getPoints = new State("getPoints", act);
 		states.add(getPoints);
 		
 		
-		act = new RunAwayFromGhost();
+		act = new OneGhostNear();
 		actions.add(act);		
 		flee = new State("flee", act);
 		states.add(flee);
 		
-		act = new GoToGhost();
+		act = new EdibleGhosts();
 		actions.add(act);
 		eatGhost = new State("eatGhost", act);
 		states.add(eatGhost);

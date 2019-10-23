@@ -5,7 +5,7 @@ import pacman.game.Game;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
 
-public class GoToPillSafe extends Action {
+public class NoGhosts extends Action {
 
 	public MOVE executeAction() {
 		return g.getNextMoveTowardsTarget(g.getPacmanCurrentNodeIndex(), findNearestPill(g), DM.PATH);

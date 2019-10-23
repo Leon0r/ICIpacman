@@ -6,7 +6,7 @@ import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
-public class GoToGhost extends Action {
+public class EdibleGhosts extends Action {
 
 	public MOVE executeAction() {
 		return g.getNextMoveTowardsTarget(g.getPacmanCurrentNodeIndex(), g.getGhostCurrentNodeIndex(findEdibleGhost(g)), DM.PATH);
