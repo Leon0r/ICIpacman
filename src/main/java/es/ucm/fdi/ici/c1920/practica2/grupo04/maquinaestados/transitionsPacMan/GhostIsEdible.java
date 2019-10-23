@@ -6,10 +6,10 @@ import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.conditions.Conditio
 
 public class GhostIsEdible implements Transition {
 
-	//GoToGhost();
+	//EdibleGhosts()
 	@Override
 	public boolean evaluate(Input in) {
-		//already done?
+		return (Condition.isOneGhostNear(in) || Condition.areManyGhostsNear(in)) && Condition.isGhostEdible(in);
 	}
 	
 }

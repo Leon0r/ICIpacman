@@ -33,7 +33,7 @@ public class MyFSMPacman extends FSMImpl{
 		states.add(getPoints);
 		
 		
-		act = new OneGhostNear();
+		act = new OneGhost();
 		actions.add(act);		
 		flee = new State("flee", act);
 		states.add(flee);
@@ -43,7 +43,7 @@ public class MyFSMPacman extends FSMImpl{
 		eatGhost = new State("eatGhost", act);
 		states.add(eatGhost);
 		
-		act = new ManyGhostsNear();
+		act = new ManyGhosts();
 		actions.add(act);
 		getPowerPill = new State("getPowerPill", act);
 		states.add(getPowerPill);
@@ -55,23 +55,23 @@ public class MyFSMPacman extends FSMImpl{
 		// desde getPoints
 		stateEngine.add(getPoints, new GhostIsEdible(), eatGhost);
 		stateEngine.add(getPoints, new GhostCloseSafePath(), flee);
-		stateEngine.add(getPoints, new GhostsCloseToMsPacman(), getPowerPill);		
+		stateEngine.add(getPoints, new ManyGhostsNear(), getPowerPill);		
 		
 		// desde flee
 		stateEngine.add(flee, new GhostIsEdible(), eatGhost);
-		stateEngine.add(flee, new NoGhostsCloseToMsPacMan(), getPoints);
-		stateEngine.add(flee, new GhostsCloseToMsPacman(), getPowerPill);
+		stateEngine.add(flee, new NoGhostsNear(), getPoints);
+		stateEngine.add(flee, new ManyGhostsNear(), getPowerPill);
 
 		
 		// desde eatGhost
-		stateEngine.add(eatGhost, new NoGhostsCloseToMsPacMan(), getPoints);
+		stateEngine.add(eatGhost, new NoGhostsNear(), getPoints);
 		stateEngine.add(eatGhost, new GhostCloseSafePath(), flee);
-		stateEngine.add(eatGhost, new GhostsCloseToMsPacman(), getPowerPill);
+		stateEngine.add(eatGhost, new ManyGhostsNear(), getPowerPill);
 		
 		// desde getPowerPill
 		stateEngine.add(getPowerPill, new GhostIsEdible(), eatGhost);
 		stateEngine.add(getPowerPill, new GhostCloseSafePath(), flee);
-		stateEngine.add(getPowerPill, new NoGhostsCloseToMsPacMan(), getPoints);
+		stateEngine.add(getPowerPill, new NoGhostsNear(), getPoints);
 		
 		
 		

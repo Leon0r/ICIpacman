@@ -4,11 +4,12 @@ import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Input;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Transition;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.conditions.Condition;
 
-public class GhostsCloseToMsPacman implements Transition {
-	
+public class NoGhostsNear implements Transition {
+
+	//NoGhosts()
 	@Override
-	public boolean evaluate(Input in) {
-		return Condition.areManyGhostsNear(in);
+	public boolean evaluate(Input in) {				
+		return Condition.noGhostsNear(in);
 	}
 
 }

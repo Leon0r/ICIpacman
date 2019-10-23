@@ -9,7 +9,7 @@ import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 
 // TO DO
-public class ManyGhostsNear extends Action {
+public class ManyGhosts extends Action {
 
 	public MOVE executeAction() {
 		MOVE move = findSafePath();
