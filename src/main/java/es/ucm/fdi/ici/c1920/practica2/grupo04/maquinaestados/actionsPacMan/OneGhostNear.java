@@ -9,6 +9,7 @@ public class OneGhostNear extends Action {
 		return g.getNextMoveAwayFromTarget(g.getPacmanCurrentNodeIndex(), g.getGhostCurrentNodeIndex(getClosestGhost()), DM.PATH);
 	}
 
+	// TO DO: huir por donde hay mas pills
 	private GHOST getClosestGhost() {
 		double d = -1;
 		GHOST ngh = GHOST.BLINKY;
