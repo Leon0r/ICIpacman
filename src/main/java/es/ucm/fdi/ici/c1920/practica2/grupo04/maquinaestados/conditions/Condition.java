@@ -22,4 +22,9 @@ public final class Condition {
 		return in.getEdibleGhost();
 	}
 	
+	// check Safe paths
+	public static boolean areThereSafePaths(Input in) {
+		return in.getAmountOfSafeMoves() > 0;
+	}
+	
 }
