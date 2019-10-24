@@ -8,6 +8,6 @@ public class OneGhostNear implements Transition {
 	//OneGhost()
 	@Override
 	public boolean evaluate(Input in) {
-		return Condition.isOneGhostNear(in);
+		return Condition.isOneGhostNear(in) && !Condition.isGhostEdible(in);
 	}
 }
