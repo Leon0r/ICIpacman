@@ -7,7 +7,7 @@ import pacman.game.Game;
 public interface FSM {
 	public State getState();
 	
-	public void checkChange(Input in);
+	public boolean checkChange(Input in);
 	
 	public void setGame(Game game);
 }

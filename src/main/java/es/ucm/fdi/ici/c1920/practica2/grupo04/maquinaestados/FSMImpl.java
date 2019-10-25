@@ -22,8 +22,8 @@ public class FSMImpl implements FSM {
 	}
 
 	@Override
-	public void checkChange(Input in) {
-		stateEngine.checkChange(in, debug);
+	public boolean checkChange(Input in) {
+		return stateEngine.checkChange(in, debug);
 	}
 
 	@Override

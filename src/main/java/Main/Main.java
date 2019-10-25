@@ -1,10 +1,10 @@
 package Main;
 
 
-import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Ghosts;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.MsPacMan;
 import pacman.Executor;
 import pacman.controllers.GhostController;
+import pacman.controllers.Ghosts;
 import pacman.controllers.PacmanController;
 
 public class Main {

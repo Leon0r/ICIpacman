@@ -20,8 +20,6 @@ public class State {
 	
 	
 	public MOVE execute(){
-		//System.out.println("Ejecuto la accion desde " + id.toString());
-		
 		return this.action.executeAction();
 	}
 	

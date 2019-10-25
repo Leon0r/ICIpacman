@@ -26,5 +26,4 @@ public final class Condition {
 	public static boolean areThereSafePaths(Input in) {
 		return in.getAmountOfSafeMoves() > 0;
 	}
-	
 }
