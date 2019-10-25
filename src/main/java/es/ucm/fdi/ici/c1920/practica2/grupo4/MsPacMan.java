@@ -1,5 +1,10 @@
-package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados;
+package es.ucm.fdi.ici.c1920.practica2.grupo4;
 
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.FSM;
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Input;
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.MyFSMPacman;
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.StateEngine;
+import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.StateEngineImpl;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -12,7 +17,7 @@ public class MsPacMan extends PacmanController {
 	StateEngine stateEngine = new StateEngineImpl();
 	FSM fsm = new MyFSMPacman(stateEngine);
 
-	double limit = 23;
+	double limit = 32;
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {

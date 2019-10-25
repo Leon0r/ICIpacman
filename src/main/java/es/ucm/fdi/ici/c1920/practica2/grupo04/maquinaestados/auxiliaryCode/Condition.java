@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.conditions;
+package es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.auxiliaryCode;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.Input;
 
 public final class Condition {
@@ -26,5 +26,4 @@ public final class Condition {
 	public static boolean areThereSafePaths(Input in) {
 		return in.getAmountOfSafeMoves() > 0;
 	}
-	
 }

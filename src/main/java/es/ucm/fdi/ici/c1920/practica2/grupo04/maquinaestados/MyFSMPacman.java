@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.actionsPacMan.*;
-import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.transitionsGhosts.GhostEdible;
 import es.ucm.fdi.ici.c1920.practica2.grupo04.maquinaestados.transitionsPacMan.*;
 import pacman.game.Game;
 

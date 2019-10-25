@@ -9,5 +9,5 @@ public interface StateEngine {
 	
 	public State currentState();
 	
-	public void checkChange(Input in, boolean debug);
+	public boolean checkChange(Input in, boolean debug);
 }

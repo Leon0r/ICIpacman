@@ -38,23 +38,23 @@ public class StateEngineImpl implements StateEngine{
 			machine.put(oldState, a);
 		}
 
-
-
 		return this;
 	}
 
 	@Override
-	public void checkChange(Input in, boolean debug) {
-
+	public boolean checkChange(Input in, boolean debug) {
+		
 		for(StateTransition t: machine.get(this.currentState)) {
 			if(t.getTransition().evaluate(in))
 			{
-				System.out.println("Cambio de estado: " + this.currentState.id +", nuevo: " +t.getNewState().id);
+				// DEBUG
+				//System.out.println("Cambio de estado: " + this.currentState.id +", nuevo: " +t.getNewState().id);
 				
 				this.currentState = t.getNewState();
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override

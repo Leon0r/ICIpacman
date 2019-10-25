@@ -331,8 +331,7 @@ public class Executor {
             if (visuals) {
                 gv.repaint();
             }
-        }
-        System.out.println(game.getScore());
+        }       
         return game.getScore();
     }
 
