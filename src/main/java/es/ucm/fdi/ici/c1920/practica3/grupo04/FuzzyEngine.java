@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c1920.practica3.grupoYY;
+package es.ucm.fdi.ici.c1920.practica3.grupo04;
 
 import java.util.HashMap;
 import java.util.Map;
