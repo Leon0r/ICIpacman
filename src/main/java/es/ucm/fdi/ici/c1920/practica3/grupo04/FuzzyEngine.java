@@ -19,7 +19,7 @@ public class FuzzyEngine {
 	public enum FUZZY_CONTROLLER  {MSPACMAN, GHOSTS};
 	
 	private FIS fis = null;
-	private static final String BIN_CLASSES = "bin.";
+	private static final String BIN_CLASSES = "src.main.java.";
 	private static final String DATA_FOLDER = ".data.";
 	private static final String PACMAN_FCL = "pacman.fcl";
 	private static final String GHOSTS_FCL = "ghosts.fcl";
@@ -29,8 +29,7 @@ public class FuzzyEngine {
 	{
 		super();
 		
-		//DANGER!!! Only works outside jar files. 
-		//Should work on windows. Not tested...
+
 		String dir = BIN_CLASSES+this.getClass().getPackage().getName()+DATA_FOLDER;
 		dir = dir.replace(".", java.io.File.separator);
 		String fcl_file = null;
