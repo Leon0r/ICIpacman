@@ -87,9 +87,11 @@ public class FuzzyEngine {
 		      System.out.println(r);
 	}
 	
+	
 	/**
 	 * Main method for testing
 	 */
+	/*
 	public static void main(String[] args)
 	{
 		FuzzyEngine fe = new FuzzyEngine(FUZZY_CONTROLLER.MSPACMAN);
@@ -102,5 +104,5 @@ public class FuzzyEngine {
 		fe.evaluate("FuzzyMsPacMan", input, output);
 		System.out.println(output.get("runAway"));
 		fe.debugRules("FuzzyMsPacMan", "MsPacManRules");
-	}
+	}*/
 }
