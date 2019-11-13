@@ -36,6 +36,7 @@ public final class MsPacMan extends PacmanController {
         current = game.getPacmanCurrentNodeIndex();
         input.clear(); output.clear();
 
+
         for (GHOST ghost : GHOST.values()) {
             double distance = game.getShortestPathDistance(current, game.getGhostCurrentNodeIndex(ghost));
             if(distance == -1) distance = 200;

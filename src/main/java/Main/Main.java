@@ -6,6 +6,7 @@ import es.ucm.fdi.ici.c1920.practica3.grupo04.MsPacMan;
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
+import pacman.game.internal.POType;
 
 public class Main {
 
@@ -18,12 +19,14 @@ public class Main {
 		while(i<j) {
 			Executor executor = new Executor.Builder()
 					.setTickLimit(4000)
-					.setGhostPO(false)
-					.setPacmanPO(false)
+					.setPOType(POType.RADIUS)
+					.setGhostPO(true)
+					.setPacmanPO(true)
 					.setGhostsMessage(false)
 					.setVisual(true)
 					.setScaleFactor(2)
 					.build();
+			
 			PacmanController pacman = new MsPacMan();
 			GhostController ghosts = new Ghosts();
 			
