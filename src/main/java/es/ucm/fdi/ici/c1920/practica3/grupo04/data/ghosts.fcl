@@ -1,0 +1,109 @@
+FUNCTION_BLOCK FuzzyGhosts	// Block definition (there may be more than one block per file)
+
+VAR_INPUT				// Define input variables
+	PACMANdistance : REAL;
+	NearestPPdistance : REAL;
+	NearestPPdistanceToPACMAN: REAL;
+	NearestEDIBLEGHOSTdistance : REAL;
+	EDIBLEtime : REAL;	
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	goToPacman : REAL;
+	fleeFromPacman : REAL;
+END_VAR
+
+FUZZIFY PACMANdistance
+	TERM near := (25, 1) (35, 0) ; 
+	TERM medium := gauss 35 25;
+	TERM far := (35, 0) (45, 1) (300, 1);
+END_FUZZIFY
+
+FUZZIFY NearestPPdistance
+	TERM near := (10, 1) (20, 0) ; 
+	TERM medium := gauss 20 10;
+	TERM far := (20, 0) (45, 1) (300, 1);
+END_FUZZIFY
+
+FUZZIFY NearestPPdistanceToPACMAN
+	TERM near := (10, 1) (20, 0) ; 
+	TERM medium := gauss 20 10;
+	TERM far := (20, 0) (45, 1) (300, 1);
+END_FUZZIFY
+
+FUZZIFY NearestEDIBLEGHOSTdistance
+	TERM near := (25, 1) (35, 0) ; 
+	TERM medium := gauss 35 25;
+	TERM far := (35, 0) (45, 1) (300, 1);
+END_FUZZIFY
+
+FUZZIFY EDIBLEtime
+	TERM soon := (5, 1) (10, 0) ; 
+	TERM normal := gauss 15 5;
+	TERM late := (15, 0) (25, 1) (300, 1);
+END_FUZZIFY
+
+DEFUZZIFY goToPacman			
+	TERM strategic := (0,1) (5,1) (15,0);
+	TERM hesitant := gauss 15 5;
+	TERM aggressive := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY fleeFromPacman			
+	TERM strategic := (0,1) (5,1) (15,0);
+	TERM hesitant := gauss 15 5;
+	TERM aggressive := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+
+RULEBLOCK GhostsRules
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'MAX' accumulation method (Other options PROBOR and SUM)
+
+	// VARIABLES PARA EL ESTADO NO EDIBLE
+	// Gotopacman
+
+	// Si pacman está muy cerca me voy a querer acercar a él lo más rapidamente posible
+	RULE 1 : IF PACMANdistance IS near THEN goToPacman IS aggressive;
+	RULE 2 : IF PACMANdistance IS medium THEN goToPacman IS hesitant;
+	RULE 3 : IF PACMANdistance IS far THEN goToPacman IS strategic;
+	// Si pacman está muy cerca de una PP no me voy a querer acercar a él
+	RULE 4 : IF NearestPPdistanceToPACMAN IS far THEN goToPacman IS aggressive;
+	RULE 5 : IF NearestPPdistanceToPACMAN IS medium THEN goToPacman IS hesitant;
+	RULE 6 : IF NearestPPdistanceToPACMAN IS near THEN goToPacman IS strategic;
+	// Tener una pastilla cerca me va a hacer querer ir más a por pacman ya que 
+	// esa la controlare yo y pacman no se acercara tanto a por ella
+	RULE 7 : IF NearestPPdistance IS near THEN goToPacman IS aggressive;
+	RULE 8 : IF NearestPPdistance IS medium THEN goToPacman IS hesitant;
+	RULE 9 : IF NearestPPdistance IS far THEN goToPacman IS hesitant;
+	// Tener un fantasma comestible cerca me va a hacer querer ir más hacia pacman, pero tampoco
+	// quiero que influya mucho si está lejos
+	RULE 10 : IF NearestEDIBLEGHOSTdistance IS far THEN goToPacman IS hesitant;
+	RULE 11 : IF NearestEDIBLEGHOSTdistance IS medium THEN goToPacman IS hesitant;
+	RULE 12 : IF NearestEDIBLEGHOSTdistance IS near THEN goToPacman IS aggressive;
+	
+
+	// VARIABLES PARA EL ESTADO EDIBLE
+	// Fleefrompacman
+
+	// Cerca de pacman, me voy rapido
+	RULE 13 : IF PACMANdistance IS near THEN fleeFromPacman IS aggressive; 	
+	RULE 14 : IF PACMANdistance IS medium THEN fleeFromPacman IS hesitant;
+	RULE 15 : IF PACMANdistance IS far THEN fleeFromPacman IS strategic;
+	// Cuanto menos tiempo me quede edible menos me querre alejar de Pacman
+	RULE 16 : IF EDIBLEtime IS soon THEN fleeFromPacman IS strategic;
+	RULE 17 : IF EDIBLEtime IS normal THEN fleeFromPacman IS hesitant;
+	RULE 18 : IF EDIBLEtime IS late THEN fleeFromPacman IS aggressive;
+	// Si pacman está cerca de una PP me alejo más rapido para evitar que me coma con esa PP
+	RULE 19 : IF NearestPPdistanceToPACMAN IS far THEN fleeFromPacman IS hesitant;
+	RULE 20 : IF NearestPPdistanceToPACMAN IS medium THEN fleeFromPacman IS hesitant;
+	RULE 21 : IF NearestPPdistanceToPACMAN IS near THEN fleeFromPacman IS aggressive;	
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
