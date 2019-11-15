@@ -1,9 +1,23 @@
 package pacman.game;
 
-import pacman.game.Constants.*;
-import pacman.game.comms.Messenger;
-import pacman.game.info.GameInfo;
-import pacman.game.internal.*;
+import static pacman.game.Constants.AWARD_LIFE_LEFT;
+import static pacman.game.Constants.COMMON_LAIR_TIME;
+import static pacman.game.Constants.EAT_DISTANCE;
+import static pacman.game.Constants.EDIBLE_TIME;
+import static pacman.game.Constants.EDIBLE_TIME_REDUCTION;
+import static pacman.game.Constants.EXTRA_LIFE_SCORE;
+import static pacman.game.Constants.GHOST_EAT_SCORE;
+import static pacman.game.Constants.GHOST_REVERSAL;
+import static pacman.game.Constants.GHOST_SPEED_REDUCTION;
+import static pacman.game.Constants.LAIR_REDUCTION;
+import static pacman.game.Constants.LEVEL_LIMIT;
+import static pacman.game.Constants.LEVEL_RESET_REDUCTION;
+import static pacman.game.Constants.MAX_TIME;
+import static pacman.game.Constants.NUM_GHOSTS;
+import static pacman.game.Constants.NUM_LIVES;
+import static pacman.game.Constants.NUM_MAZES;
+import static pacman.game.Constants.PILL;
+import static pacman.game.Constants.POWER_PILL;
 
 import java.util.BitSet;
 import java.util.EnumMap;
@@ -11,7 +25,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import static pacman.game.Constants.*;
+import pacman.game.Constants.DM;
+import pacman.game.Constants.GHOST;
+import pacman.game.Constants.MOVE;
+import pacman.game.comms.Messenger;
+import pacman.game.info.GameInfo;
+import pacman.game.internal.Ghost;
+import pacman.game.internal.Maze;
+import pacman.game.internal.Node;
+import pacman.game.internal.POType;
+import pacman.game.internal.PacMan;
+import pacman.game.internal.PathsCache;
 
 /**
  * The implementation of Ms Pac-Man. This class contains the game engine and all methods required to
@@ -63,7 +87,8 @@ public final class Game {
     public static final int PINKY = GHOST.PINKY.ordinal();
     public static final int SUE = GHOST.SUE.ordinal();
     public static final int PACMAN = 5;
-
+    public static final int ANY_GHOST = 6;
+    
     private final POType poType;
     private final int sightLimit;
     private boolean ghostsPresent = true;
@@ -171,6 +196,9 @@ public final class Game {
             return false;
         }
         Node currentNode = (mazes[mazeIndex]).graph[getNodeIndexOfOwner()];
+        
+        if(nodeIndex>=mazes[mazeIndex].graph.length)
+			return false;
         Node check = (mazes[mazeIndex]).graph[nodeIndex];
 
         switch (poType) {
@@ -745,25 +773,32 @@ public final class Game {
     private MOVE correctPacManDir(MOVE direction) {
         Node node = currentMaze.graph[internalPacman.currentNodeIndex];
         
-        //direction is correct, return it
-        if (node.neighbourhood.containsKey(direction)&&(direction != internalPacman.lastDir.opposite())){
-        	internalPacman.lastDir = direction;	
-        	return direction;
-        } else {
-            //try to use previous direction (i.e., continue in the same direction)
-            if (node.neighbourhood.containsKey(internalPacman.lastMoveMade)) {
-                return internalPacman.lastMoveMade;
-                //else stay put
-            } else {
-                MOVE[] moves = node.allPossibleMoves.get(internalPacman.lastDir);
-                for(MOVE v: moves)
-                	if(v != internalPacman.lastDir.opposite())
-                	{
-                		internalPacman.lastDir = v;
-                		return v;
-                	}
-            }
-        }
+        try {
+			//direction is correct, return it
+			if (node.neighbourhood.containsKey(direction)&&(direction != internalPacman.lastDir.opposite())){
+				internalPacman.lastDir = direction;	
+				return direction;
+			} else {
+			    //try to use previous direction (i.e., continue in the same direction)
+			    if (node.neighbourhood.containsKey(internalPacman.lastMoveMade)) {
+			        return internalPacman.lastMoveMade;
+			        //else stay put
+			    } else {
+			        MOVE[] moves = node.allPossibleMoves.get(internalPacman.lastDir);
+			        if(moves == null)
+			        	return internalPacman.lastDir;
+			        for(MOVE v: moves)
+			        	if(v != internalPacman.lastDir.opposite())
+			        	{
+			        		internalPacman.lastDir = v;
+			        		return v;
+			        	}
+			    }
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return MOVE.NEUTRAL;
     }
 
@@ -1458,15 +1493,19 @@ public final class Game {
      * @param ghostType the ghost type
      * @return true, if successful
      */
-    @SuppressWarnings({"WeakerAccess", "unused"})
+    //@SuppressWarnings({"WeakerAccess", "unused"})
     public Boolean doesGhostRequireAction(GHOST ghostType) {
         //inlcude neutral here for the unique case where the ghost just left the lair
-        if (!po || isNodeObservable(ghosts.get(ghostType).currentNodeIndex)) {
+        /*
+    	if (!po || isNodeObservable(ghosts.get(ghostType).currentNodeIndex)) {
             return ((isJunction(ghosts.get(ghostType).currentNodeIndex) || (ghosts.get(ghostType).lastMoveMade == MOVE.NEUTRAL) && ghosts.get(ghostType).currentNodeIndex == currentMaze.initialGhostNodeIndex)
                     && (ghosts.get(ghostType).edibleTime == 0 || ghosts.get(ghostType).edibleTime % GHOST_SPEED_REDUCTION != 0));
         } else {
             return null;
         }
+        */
+    	return ((isJunction(ghosts.get(ghostType).currentNodeIndex) || (ghosts.get(ghostType).lastMoveMade == MOVE.NEUTRAL) && ghosts.get(ghostType).currentNodeIndex == currentMaze.initialGhostNodeIndex)
+                && (ghosts.get(ghostType).edibleTime == 0 || ghosts.get(ghostType).edibleTime % GHOST_SPEED_REDUCTION != 0));
     }
 
     /**
@@ -1575,13 +1614,22 @@ public final class Game {
      */
     @SuppressWarnings({"WeakerAccess", "unused"})
     public int getShortestPathDistance(int fromNodeIndex, int toNodeIndex) {
-        if (fromNodeIndex == toNodeIndex) {
-            return 0;
-        } else if (fromNodeIndex < toNodeIndex) {
-            return currentMaze.shortestPathDistances[((toNodeIndex * (toNodeIndex + 1)) / 2) + fromNodeIndex];
-        } else {
-            return currentMaze.shortestPathDistances[((fromNodeIndex * (fromNodeIndex + 1)) / 2) + toNodeIndex];
-        }
+
+        try {
+        	if (toNodeIndex == -1)
+        		return 0;
+			if (fromNodeIndex == toNodeIndex) {
+			    return 0;
+			} else if (fromNodeIndex < toNodeIndex) {
+			    return currentMaze.shortestPathDistances[((toNodeIndex * (toNodeIndex + 1)) / 2) + fromNodeIndex];
+			} else {
+			    return currentMaze.shortestPathDistances[((fromNodeIndex * (fromNodeIndex + 1)) / 2) + toNodeIndex];
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return 0 ;
     }
 
     /**
@@ -1593,7 +1641,14 @@ public final class Game {
      */
     @SuppressWarnings({"WeakerAccess", "unused"})
     public double getEuclideanDistance(int fromNodeIndex, int toNodeIndex) {
+    	try {
         return Math.sqrt(Math.pow(currentMaze.graph[fromNodeIndex].x - currentMaze.graph[toNodeIndex].x, 2) + Math.pow(currentMaze.graph[fromNodeIndex].y - currentMaze.graph[toNodeIndex].y, 2));
+    	}
+    	catch(Exception e)
+        {
+        	System.err.println(e);
+        }
+        return 0;
     }
 
     /**
@@ -1618,6 +1673,20 @@ public final class Game {
      */
     @SuppressWarnings({"WeakerAccess", "unused"})
     public double getDistance(int fromNodeIndex, int toNodeIndex, DM distanceMeasure) {
+    	/*
+    	if(fromNodeIndex >= this.getCurrentMaze().graph.length)
+
+    	{
+    		System.err.println("Error. fromNodeIndex > graph.length");
+    		return 0;
+    	}
+    	*/
+    	if(toNodeIndex >= this.getCurrentMaze().graph.length)
+    	{
+    		System.err.println("Error. toNodeIndex > graph.length");
+    		return 0;
+    	}
+    	    	 
         switch (distanceMeasure) {
             case PATH:
                 return getShortestPathDistance(fromNodeIndex, toNodeIndex);
@@ -1746,7 +1815,8 @@ public final class Game {
         MOVE move = null;
 
         double maxDistance = Integer.MIN_VALUE;
-
+        if((fromNodeIndex==-1) || (toNodeIndex==-1))
+        	return MOVE.NEUTRAL;
         for (Entry<MOVE, Integer> entry : currentMaze.graph[fromNodeIndex].neighbourhood.entrySet()) {
             double distance = getDistance(entry.getValue(), toNodeIndex, distanceMeasure);
 
@@ -1771,7 +1841,8 @@ public final class Game {
     @SuppressWarnings({"WeakerAccess", "unused"})
     public MOVE getApproximateNextMoveTowardsTarget(int fromNodeIndex, int toNodeIndex, MOVE lastMoveMade, DM distanceMeasure) {
         MOVE move = null;
-
+        if((toNodeIndex == -1)||(fromNodeIndex == -1))
+        	return MOVE.NEUTRAL;
         double minDistance = Integer.MAX_VALUE;
 
         for (Entry<MOVE, Integer> entry : currentMaze.graph[fromNodeIndex].allNeighbourhoods.get(lastMoveMade).entrySet()) {
