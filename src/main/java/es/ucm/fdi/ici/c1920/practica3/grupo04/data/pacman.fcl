@@ -84,33 +84,36 @@ RULEBLOCK MsPacManRules
 	ACCU : MAX;			// Use 'MAX' accumulation method (Other options PROBOR and SUM)
 
 	//If all ghosts are following
-	RULE 1 : IF (BLINKYdistance IS near) AND (PINKYdistance IS near) AND (INKYdistance IS near) AND (SUEdistance IS near) AND ((PILL0distance IS near) OR (PILL1distance IS near) OR (PILL2distance IS near) OR (PILL3distance IS near)) THEN (runAway IS emergency) AND (goToPowerPill IS emergency);
-	//If three ghosts are following
-	RULE 1 : IF (BLINKYdistance IS near) AND (PINKYdistance IS near) AND (INKYdistance IS near) AND ((PILL0distance IS near) OR (PILL1distance IS near) OR (PILL2distance IS near) OR (PILL3distance IS near)) THEN (runAway IS emergency) AND (goToPowerPill IS nervious);
-	RULE 1 : IF (BLINKYdistance IS near) AND (PINKYdistance IS near) AND (SUEdistance IS near) AND ((PILL0distance IS near) OR (PILL1distance IS near) OR (PILL2distance IS near) OR (PILL3distance IS near)) THEN (runAway IS emergency) AND (goToPowerPill IS nervious);
-	RULE 1 : IF (BLINKYdistance IS near) AND (INKYdistance IS near) AND (SUEdistance IS near) AND ((PILL0distance IS near) OR (PILL1distance IS near) OR (PILL2distance IS near) OR (PILL3distance IS near)) THEN (runAway IS emergency) AND (goToPowerPill IS nervious);
-	RULE 1 : IF (PINKYdistance IS near) AND (INKYdistance IS near) AND (SUEdistance IS near) AND ((PILL0distance IS near) OR (PILL1distance IS near) OR (PILL2distance IS near) OR (PILL3distance IS near)) THEN (runAway IS emergency) AND (goToPowerPill IS nervious);
-	//If two ghosts are following
-	RULE 1 : IF (BLINKYdistance IS near) AND (PINKYdistance IS near) THEN (runAway IS nervious) AND (goToPowerPill IS calm);
-	RULE 1 : IF (BLINKYdistance IS near) AND (INKYdistance IS near) THEN (runAway IS nervious) AND (goToPowerPill IS calm);
-	RULE 1 : IF (BLINKYdistance IS near) AND (SUEdistance IS near) THEN (runAway IS nervious) AND (goToPowerPill IS calm);
-	RULE 1 : IF (PINKYdistance IS near) AND (INKYdistance IS near) THEN (runAway IS nervious) AND (goToPowerPill IS calm);
-	RULE 1 : IF (PINKYdistance IS near) AND (SUEdistance IS near) THEN (runAway IS nervious) AND (goToPowerPill IS calm);
-	RULE 1 : IF (INKYdistance IS near) AND (SUEdistance IS near) THEN (runAway IS nervious) AND (goToPowerPill IS calm);
-	//If one ghost is following
-	RULE 1 : IF BLINKYdistance IS near THEN (runAway IS calm) AND (goToPowerPill IS calm);
-	RULE 2 : IF PINKYdistance IS near THEN (runAway IS calm) AND (goToPowerPill IS calm);
-	RULE 3 : IF INKYdistance IS near THEN (runAway IS calm) AND (goToPowerPill IS calm);
-	RULE 4 : IF SUEdistance IS near THEN (runAway IS calm) AND (goToPowerPill IS calm);
+	RULE 1 : IF BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS emergency;
 	
-	RULE 5 : IF BLINKYdistance IS medium THEN runAway IS nervious;
-	RULE 6 : IF PINKYdistance IS medium THEN runAway IS nervious;
-	RULE 7 : IF INKYdistance IS medium THEN runAway IS nervious;
-	RULE 8 : IF SUEdistance IS medium THEN runAway IS nervious;
-	RULE 9 : IF BLINKYdistance IS far THEN runAway IS calm;
-	RULE 10 : IF PINKYdistance IS far THEN runAway IS calm;
-	RULE 11 : IF INKYdistance IS far THEN runAway IS calm;
-	RULE 12 : IF SUEdistance IS far THEN runAway IS calm;
+	//If three ghosts are following
+	RULE 2 : IF BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervious;
+	RULE 3 : IF BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervious;
+	RULE 4 : IF BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervious;
+	RULE 5 : IF PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervious;
+	
+	//If two ghosts are following
+	RULE 6 : IF BLINKYdistance IS near AND PINKYdistance IS near THEN runAway IS nervious, goToPowerPill IS calm;
+	RULE 7 : IF BLINKYdistance IS near AND INKYdistance IS near THEN runAway IS nervious, goToPowerPill IS calm;
+	RULE 8 : IF BLINKYdistance IS near AND SUEdistance IS near THEN runAway IS nervious, goToPowerPill IS calm;
+	RULE 9 : IF PINKYdistance IS near AND INKYdistance IS near THEN runAway IS nervious, goToPowerPill IS calm;
+	RULE 10 : IF PINKYdistance IS near AND SUEdistance IS near THEN runAway IS nervious, goToPowerPill IS calm;
+	RULE 11 : IF INKYdistance IS near AND SUEdistance IS near THEN runAway IS nervious, goToPowerPill IS calm;
+	
+	//If one ghost is following
+	RULE 12 : IF BLINKYdistance IS near THEN runAway IS calm, goToPowerPill IS calm;
+	RULE 13 : IF PINKYdistance IS near THEN runAway IS calm, goToPowerPill IS calm;
+	RULE 14 : IF INKYdistance IS near THEN runAway IS calm, goToPowerPill IS calm;
+	RULE 15 : IF SUEdistance IS near THEN runAway IS calm, goToPowerPill IS calm;
+	
+	RULE 16 : IF BLINKYdistance IS medium THEN runAway IS nervious;
+	RULE 17 : IF PINKYdistance IS medium THEN runAway IS nervious;
+	RULE 18 : IF INKYdistance IS medium THEN runAway IS nervious;
+	RULE 19 : IF SUEdistance IS medium THEN runAway IS nervious;
+	RULE 20 : IF BLINKYdistance IS far THEN runAway IS calm;
+	RULE 21 : IF PINKYdistance IS far THEN runAway IS calm;
+	RULE 22 : IF INKYdistance IS far THEN runAway IS calm;
+	RULE 23 : IF SUEdistance IS far THEN runAway IS calm;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
