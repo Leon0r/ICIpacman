@@ -5,15 +5,15 @@ VAR_INPUT				// Define input variables
 	PINKYdistance : REAL;
 	INKYdistance : REAL;
 	SUEdistance : REAL;
-	PILL0distance : REAL;
-	PILL1distance : REAL;
-	PILL2distance : REAL;
-	PILL3distance : REAL;
+	NearestPowerPill : REAL;
 	SavePath : REAL;
+	EdibleTime : REAL;
+	PowerPillInSavePath : REAL;
 END_VAR
 
 VAR_OUTPUT				// Define output variable
-	runAway : REAL;
+	eatPills : REAL;
+	eatGhosts : REAL;
 	goToPowerPill : REAL;
 END_VAR
 
@@ -39,7 +39,7 @@ FUZZIFY SUEdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'ex
 	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
 
-// PILLS DISTANCES
+/*// PILLS DISTANCES
 FUZZIFY PILL0distance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM near := (0, 1) (60, 0) ; 
 	TERM medium := gauss 75 25;
@@ -59,14 +59,36 @@ FUZZIFY PILL3distance			// Fuzzify input variable 'service': {'poor', 'good' , '
 	TERM near := (0, 1) (60, 0) ; 
 	TERM medium := gauss 75 25;
 	TERM far := (90, 0) (150, 1) (200, 1);
+END_FUZZIFY*/
+FUZZIFY NearestPowerPill			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM near := (0, 1) (60, 0) ; 
+	TERM medium := gauss 75 25;
+	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY SavePath			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM yes := 1;
 	TERM no := 0;
 END_FUZZIFY
+FUZZIFY EdibleTime
+	TERM soon := (5, 1) (10, 0) ; 
+	TERM normal := gauss 15 5;
+	TERM late := (15, 0) (25, 1) (300, 1);
+END_FUZZIFY
+FUZZIFY PowerPillInSavePath			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM yes := 1;
+	TERM no := 0;
+END_FUZZIFY
 
 // METODOS 
-DEFUZZIFY runAway			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+DEFUZZIFY eatPills			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervous := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY eatGhosts			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
 	TERM calm := (0,1) (5,1) (15,0);
 	TERM nervous := gauss 15 5;
 	TERM emergency := (15,0) (25,1) (30,1);
@@ -91,6 +113,38 @@ RULEBLOCK MsPacManRules
 
 	//Maybe no need to use distance of power pills? Maybe no need to differentiate between runaway and goToPowerPill?
 	//TO DO: add edible states
+	
+	
+	
+	/*
+	if four ghosts
+		if save path
+			if power pill in save path -> eat power pill
+			if power pill not in save path -> eat pills (in save path)
+		if no save path
+			if ghost closer than power pill -> eat pills
+			if ghost farther than power pill -> eat power pill
+			if ghost as close as power pill -> eat power pill
+	if three ghosts
+		if save path
+			if power pill in save path -> eat power pill
+			if power pill not in save path -> eat pills (in save path)
+		if no save path
+			if ghost closer than power pill -> eat pills
+			if ghost farther than power pill -> eat power pill
+			if ghost as close as power pill -> eat power pill
+	if two ghosts
+		if save path -> eat pills
+		if no save path
+			if ghost closer than power pill -> eat pills
+			if ghost farther than power pill -> eat power pill
+			if ghost as close as power pill -> eat power pill
+	If one ghost-> eat pills
+	If no ghosts -> eat pills
+	*/
+	
+	
+	
 
 	//If all ghosts are following
 	RULE 1 : IF SavePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND THEN runAway IS emergency, goToPowerPill IS emergency;
