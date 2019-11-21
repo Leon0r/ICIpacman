@@ -11,7 +11,7 @@ VAR_INPUT				// Define input variables
 	SUEconfidence : REAL;
 	
 	NearestPowerPill : REAL;
-	SavePath : REAL;
+	SafePath : REAL;
 	EdibleTime : REAL;
 	SafePowerPill : REAL;
 END_VAR
@@ -93,7 +93,7 @@ FUZZIFY NearestPowerPill			// Fuzzify input variable 'service': {'poor', 'good' 
 	TERM medium := gauss 75 25;
 	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
-FUZZIFY SavePath			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+FUZZIFY SafePath			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM yes := 1;
 	TERM no := 0;
 END_FUZZIFY
@@ -175,44 +175,44 @@ RULEBLOCK MsPacManRules
 	
 
 	//If all ghosts are following
-	RULE 1 : IF SavePath IS yes AND SafePowerPill IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS emergency;
-	RULE 2 : IF SavePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
+	RULE 1 : IF SafePath IS yes AND SafePowerPill IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS emergency;
+	RULE 2 : IF SafePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
 	
 	//If three ghosts are following
-	RULE 3 : IF SavePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 4 : IF SavePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 5 : IF SavePath IS yes AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 6 : IF SavePath IS yes AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 3 : IF SafePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 4 : IF SafePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 5 : IF SafePath IS yes AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 6 : IF SafePath IS yes AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN runAway IS emergency, goToPowerPill IS nervous;
 		//TO DO: don't know how to act
-	RULE 7 : IF SavePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 8 : IF SavePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 9 : IF SavePath IS yes AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 10 : IF SavePath IS yes AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 7 : IF SafePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 8 : IF SafePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 9 : IF SafePath IS yes AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 10 : IF SafePath IS yes AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
 	
-	RULE 11 : IF SavePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
-	RULE 12 : IF SavePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
-	RULE 13 : IF SavePath IS no AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
-	RULE 14 : IF SavePath IS no AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
+	RULE 11 : IF SafePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
+	RULE 12 : IF SafePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
+	RULE 13 : IF SafePath IS no AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
+	RULE 14 : IF SafePath IS no AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) THEN goToPowerPill IS emergency;
 		//TO DO: don't know how to act
-	RULE 15 : IF SavePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 16 : IF SavePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 17 : IF SavePath IS no AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
-	RULE 18 : IF SavePath IS no AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 15 : IF SafePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 16 : IF SafePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 17 : IF SafePath IS no AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
+	RULE 18 : IF SafePath IS no AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS emergency, goToPowerPill IS nervous;
 	
 	//If two ghosts are following
-	RULE 19 : IF SavePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
-	RULE 20 : IF SavePath IS yes AND BLINKYdistance IS near AND INKYdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
-	RULE 21 : IF SavePath IS yes AND BLINKYdistance IS near AND SUEdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
-	RULE 22 : IF SavePath IS yes AND PINKYdistance IS near AND INKYdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
-	RULE 23 : IF SavePath IS yes AND PINKYdistance IS near AND SUEdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
-	RULE 24 : IF SavePath IS yes AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
+	RULE 19 : IF SafePath IS yes AND BLINKYdistance IS near AND PINKYdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
+	RULE 20 : IF SafePath IS yes AND BLINKYdistance IS near AND INKYdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
+	RULE 21 : IF SafePath IS yes AND BLINKYdistance IS near AND SUEdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
+	RULE 22 : IF SafePath IS yes AND PINKYdistance IS near AND INKYdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
+	RULE 23 : IF SafePath IS yes AND PINKYdistance IS near AND SUEdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
+	RULE 24 : IF SafePath IS yes AND INKYdistance IS near AND SUEdistance IS near THEN runAway IS nervous, goToPowerPill IS calm;
 	
-	RULE 25 : IF SavePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near THEN goToPowerPill IS emergency;
-	RULE 26 : IF SavePath IS no AND BLINKYdistance IS near AND INKYdistance IS near THEN goToPowerPill IS emergency;
-	RULE 27 : IF SavePath IS no AND BLINKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
-	RULE 28 : IF SavePath IS no AND PINKYdistance IS near AND INKYdistance IS near THEN goToPowerPill IS emergency;
-	RULE 29 : IF SavePath IS no AND PINKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
-	RULE 30 : IF SavePath IS no AND INKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
+	RULE 25 : IF SafePath IS no AND BLINKYdistance IS near AND PINKYdistance IS near THEN goToPowerPill IS emergency;
+	RULE 26 : IF SafePath IS no AND BLINKYdistance IS near AND INKYdistance IS near THEN goToPowerPill IS emergency;
+	RULE 27 : IF SafePath IS no AND BLINKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
+	RULE 28 : IF SafePath IS no AND PINKYdistance IS near AND INKYdistance IS near THEN goToPowerPill IS emergency;
+	RULE 29 : IF SafePath IS no AND PINKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
+	RULE 30 : IF SafePath IS no AND INKYdistance IS near AND SUEdistance IS near THEN goToPowerPill IS emergency;
 	
 	//If one ghost is following
 	RULE 31 : IF BLINKYdistance IS near THEN runAway IS calm, goToPowerPill IS calm;
