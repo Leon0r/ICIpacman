@@ -78,7 +78,7 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 		for(double ghost : eatGhosts) {
-			System.out.println(ghost);
+			//System.out.println(ghost);
 			if(ghost > 23) {
 				edibleGhosts++;
 			}

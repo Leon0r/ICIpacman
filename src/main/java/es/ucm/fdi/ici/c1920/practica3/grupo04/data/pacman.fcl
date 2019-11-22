@@ -82,24 +82,24 @@ END_FUZZIFY
 
 
 FUZZIFY BLINKYEdibleTime
-	TERM soon := (5, 1) (10, 0) ; 
+	TERM late := (5, 1) (10, 0) ; 
 	TERM normal := gauss 15 5;
-	TERM late := (15, 0) (100, 1) (200, 1);
+	TERM soon := (15, 0) (100, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY PINKYEdibleTime
-	TERM soon := (5, 1) (10, 0) ; 
+	TERM late := (5, 1) (10, 0) ; 
 	TERM normal := gauss 15 5;
-	TERM late := (15, 0) (100, 1) (200, 1);
+	TERM soon := (15, 0) (100, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY INKYEdibleTime
-	TERM soon := (5, 1) (10, 0) ; 
+	TERM late := (5, 1) (10, 0) ; 
 	TERM normal := gauss 15 5;
-	TERM late := (15, 0) (100, 1) (200, 1);
+	TERM soon := (15, 0) (100, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY SUEEdibleTime
-	TERM soon := (5, 1) (10, 0) ; 
+	TERM late := (5, 1) (10, 0) ; 
 	TERM normal := gauss 15 5;
-	TERM late := (15, 0) (100, 1) (200, 1);
+	TERM soon := (15, 0) (100, 1) (200, 1);
 END_FUZZIFY
 
 
