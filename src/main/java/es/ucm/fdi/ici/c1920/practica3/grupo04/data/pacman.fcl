@@ -14,30 +14,35 @@ VAR_INPUT				// Define input variables
 	SUEdistance : REAL;
 	SUEconfidence : REAL;
 	
-	// REST //////////////////////////////////////////////////////////////////////////////////////////////
-	NearestPowerPill : REAL;
-	SafePath : REAL;
 	EdibleTime : REAL;
-	SafePowerPill : REAL;
 END_VAR
 
 VAR_OUTPUT				// Define output variables
-	eatPills : REAL;
-	eatGhosts : REAL;
-	eatPowerPill : REAL;
+	fleeFromBLINKY : REAL;
+	eatBLINKY : REAL;
+	
+	fleeFromPINKY : REAL;
+	eatPINKY : REAL;
+	
+	fleeFromINKY : REAL;
+	eatINKY : REAL;
+	
+	fleeFromSUE : REAL;
+	eatSUE : REAL;
 END_VAR
 
+
 // Fuzzify input variables
-// GHOST DISTANCES //////////////////////////////////////////////////////////////////////////////////////////////
+// GHOSTS //////////////////////////////////////////////////////////////////////////////////////////////
 FUZZIFY BLINKYdistance
 	TERM near := (0, 1) (60, 0) ; 
 	TERM medium := gauss 75 25;
 	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY BLINKYconfidence			
-	TERM near := (0, 1) (40, 0) ; 
-	TERM medium := (12,0) (16, 1) (24, 1) (60, 0);
-	TERM far := (16,0) (80, 1);
+	TERM low := (0, 1) (40, 0) ; 
+	TERM medium := gauss 50 30;
+	TERM high := (60, 0) (100, 1);
 END_FUZZIFY
 
 FUZZIFY PINKYdistance			
@@ -46,9 +51,9 @@ FUZZIFY PINKYdistance
 	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY PINKYconfidence			
-	TERM near := (0, 1) (40, 0) ; 
-	TERM medium := (12,0) (16, 1) (24, 1) (60, 0);
-	TERM far := (16,0) (80, 1);
+	TERM low := (0, 1) (40, 0) ; 
+	TERM medium := gauss 50 30;
+	TERM high := (60, 0) (100, 1);
 END_FUZZIFY
 
 FUZZIFY INKYdistance			
@@ -57,9 +62,9 @@ FUZZIFY INKYdistance
 	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY INKYconfidence			
-	TERM near := (0, 1) (40, 0) ; 
-	TERM medium := (12,0) (16, 1) (24, 1) (60, 0);
-	TERM far := (16,0) (80, 1);
+	TERM low := (0, 1) (40, 0) ; 
+	TERM medium := gauss 50 30;
+	TERM high := (60, 0) (100, 1);
 END_FUZZIFY
 
 FUZZIFY SUEdistance			
@@ -68,57 +73,86 @@ FUZZIFY SUEdistance
 	TERM far := (90, 0) (150, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY SUEconfidence			
-	TERM near := (0, 1) (40, 0) ; 
-	TERM medium := (12,0) (16, 1) (24, 1) (60, 0);
-	TERM far := (16,0) (80, 1);
+	TERM low := (0, 1) (40, 0) ; 
+	TERM medium := gauss 50 30;
+	TERM high := (60, 0) (100, 1);
 END_FUZZIFY
 
-// REST DISTANCES //////////////////////////////////////////////////////////////////////////////////////////////
-FUZZIFY NearestPowerPill			
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
-END_FUZZIFY
-FUZZIFY SafePath			
-	TERM yes := 1;
-	TERM no := 0;
-END_FUZZIFY
+
 FUZZIFY EdibleTime
 	TERM soon := (5, 1) (10, 0) ; 
 	TERM normal := gauss 15 5;
-	TERM late := (15, 0) (25, 1) (300, 1);
+	TERM late := (15, 0) (100, 1) (200, 1);
 END_FUZZIFY
-FUZZIFY SafePowerPill			
-	TERM yes := 1;
-	TERM no := 0;
-END_FUZZIFY
+
 
 // Defuzzify output variables
-// METODOS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DEFUZZIFY runAway			
-	TERM calm := (0,1) (5,1) (15,0);
-	TERM nervous := gauss 15 5;
-	TERM emergency := (15,0) (25,1) (30,1);
-	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+// GHOSTS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+DEFUZZIFY fleeFromBLINKY			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
-DEFUZZIFY eatGhosts			
-	TERM calm := (0,1) (5,1) (15,0);
-	TERM nervous := gauss 15 5;
-	TERM emergency := (15,0) (25,1) (30,1);
-	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+DEFUZZIFY eatBLINKY			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
-DEFUZZIFY eatPowerPill			
-	TERM calm := (0,1) (5,1) (15,0);
-	TERM nervous := gauss 15 5;
-	TERM emergency := (15,0) (25,1) (30,1);
-	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+DEFUZZIFY fleeFromPINKY			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
+DEFUZZIFY eatPINKY			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY fleeFromINKY			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY eatINKY			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY fleeFromSUE			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY eatSUE			
+	TERM low := (0,1) (5,1) (15,0);
+	TERM medium := gauss 15 5;
+	TERM high := (15,0) (25,1) (30,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method COG
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+// RULES ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RULEBLOCK MsPacManRules
 	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
 	OR : MAX;
@@ -155,157 +189,24 @@ RULEBLOCK MsPacManRules
 	If no ghosts -> eat pills
 	*/
 	
-
-	//If all ghosts are following
-	RULE 1 : IF SafePath IS yes AND SafePowerPill IS yes AND 
-		BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS emergency;
+	 RULE 1 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND EdibleTime IS late
+	 	THEN fleeFromBLINKY IS high;
+	 RULE 2 : IF BLINKYdistance IS near AND BLINKYconfidence IS low AND EdibleTime IS late
+	 	THEN fleeFromBLINKY IS medium;
+	 RULE 3 : IF BLINKYdistance IS far AND BLINKYconfidence IS high AND EdibleTime IS late
+	 	THEN fleeFromBLINKY IS low;
+	 RULE 4 : IF BLINKYdistance IS far AND BLINKYconfidence IS low AND EdibleTime IS late
+	 	THEN fleeFromBLINKY IS low;
+	 	
+	 RULE 5 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND EdibleTime IS soon
+	 	THEN eatBLINKY IS high;
+	 RULE 6 : IF BLINKYdistance IS near AND BLINKYconfidence IS low AND EdibleTime IS soon
+	 	THEN eatBLINKY IS medium;
+	 RULE 7 : IF BLINKYdistance IS far AND BLINKYconfidence IS high AND EdibleTime IS soon
+	 	THEN eatBLINKY IS low;
+	 RULE 8 : IF BLINKYdistance IS far AND BLINKYconfidence IS low AND EdibleTime IS soon
+	 	THEN eatBLINKY IS low;
 		
-	RULE 2 : IF SafePath IS no AND BLINKYdistance IS near AND 
-		PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		THEN eatPowerPill IS emergency;
-	
-	//If three ghosts are following
-	RULE 3 : IF SafePath IS yes AND BLINKYdistance IS near 
-		AND PINKYdistance IS near AND INKYdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 4 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 5 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 6 : IF SafePath IS yes 
-		AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-		//TO DO: don't know how to act
-	RULE 7 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 8 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 9 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 10 : IF SafePath IS yes 
-		AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-	
-	RULE 11 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN eatPowerPill IS emergency;
-		
-	RULE 12 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN eatPowerPill IS emergency;
-		
-	RULE 13 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN eatPowerPill IS emergency;
-		
-	RULE 14 : IF SafePath IS no 
-		AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		AND (PILL0distance IS near OR PILL1distance IS near OR PILL2distance IS near OR PILL3distance IS near) 
-		THEN eatPowerPill IS emergency;
-		
-		//TO DO: don't know how to act
-	RULE 15 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND INKYdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 16 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND PINKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 17 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-		
-	RULE 18 : IF SafePath IS no 
-		AND PINKYdistance IS near AND INKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS emergency, eatPowerPill IS nervous;
-	
-	//If two ghosts are following
-	RULE 19 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND PINKYdistance IS near 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 20 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND INKYdistance IS near 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 21 : IF SafePath IS yes 
-		AND BLINKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 22 : IF SafePath IS yes 
-		AND PINKYdistance IS near AND INKYdistance IS near 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 23 : IF SafePath IS yes 
-		AND PINKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 24 : IF SafePath IS yes 
-		AND INKYdistance IS near AND SUEdistance IS near 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	
-	RULE 25 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND PINKYdistance IS near 
-		THEN eatPowerPill IS emergency;
-	RULE 26 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND INKYdistance IS near 
-		THEN eatPowerPill IS emergency;
-	RULE 27 : IF SafePath IS no 
-		AND BLINKYdistance IS near AND SUEdistance IS near 
-		THEN eatPowerPill IS emergency;
-	RULE 28 : IF SafePath IS no 
-		AND PINKYdistance IS near AND INKYdistance IS near 
-		THEN eatPowerPill IS emergency;
-	RULE 29 : IF SafePath IS no 
-		AND PINKYdistance IS near AND SUEdistance IS near 
-		THEN eatPowerPill IS emergency;
-	RULE 30 : IF SafePath IS no 
-		AND INKYdistance IS near AND SUEdistance IS near 
-		THEN eatPowerPill IS emergency;
-	
-	//If one ghost is following
-	RULE 31 : IF BLINKYdistance IS near 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	RULE 32 : IF PINKYdistance IS near 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	RULE 33 : IF INKYdistance IS near 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	RULE 34 : IF SUEdistance IS near 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	
-	//If ghosts are not near
-	RULE 35 : IF BLINKYdistance IS medium 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 36 : IF PINKYdistance IS medium 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 37 : IF INKYdistance IS medium 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 38 : IF SUEdistance IS medium 
-		THEN runAway IS nervous, eatPowerPill IS calm;
-	RULE 39 : IF BLINKYdistance IS far 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	RULE 40 : IF PINKYdistance IS far 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	RULE 41 : IF INKYdistance IS far 
-		THEN runAway IS calm, eatPowerPill IS calm;
-	RULE 42 : IF SUEdistance IS far 
-		THEN runAway IS calm, eatPowerPill IS calm;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
