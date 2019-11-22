@@ -1,6 +1,7 @@
 package es.ucm.fdi.ici.c1920.practica3.grupo04;
 
 import pacman.controllers.PacmanController;
+import es.ucm.fdi.ici.c1920.practica3.grupo04.auxiliaryCode.DataGetter;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -18,6 +19,7 @@ public final class MsPacMan extends PacmanController {
 
 	private static final Double RUNAWAY_LIMIT = 15.0;
 	private static final Double MAX_DISTANCE = 200.0;
+	private static final Double MAX_CONFIDENCE = 100.0;
 
 	FuzzyEngine fe;
 	HashMap<String, Double> input;   HashMap<String, Double> output;
@@ -29,7 +31,12 @@ public final class MsPacMan extends PacmanController {
 	}
 
 	private double[] distances = {MAX_DISTANCE,MAX_DISTANCE,MAX_DISTANCE,MAX_DISTANCE};
+	private double[] confidences = {MAX_CONFIDENCE,MAX_CONFIDENCE,MAX_CONFIDENCE,MAX_CONFIDENCE};
+	private double[] fleeFromGhosts = {0,0,0,0};
+	private double[] eatGhosts = {0,0,0,0};
 	private int current;
+	private int edibleGhosts = 0;
+	private int nearGhosts = 0;
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
@@ -39,23 +46,53 @@ public final class MsPacMan extends PacmanController {
 
 		for (GHOST ghost : GHOST.values()) {
 			int index = game.getGhostCurrentNodeIndex(ghost);
-			double distance = 200;
+			double distance = MAX_DISTANCE;
 			if(index != -1) {
 				distance = game.getShortestPathDistance(current, index);
 			}
-			if(distance != 0) // With PO visibility non observable ghosts distance is 0.
+			if(distance != 0) { // With PO visibility non observable ghosts distance is 0.
 				distances[ghost.ordinal()] = distance;
+				confidences[ghost.ordinal()] = MAX_CONFIDENCE;
+			}
+			else if (confidences[ghost.ordinal()] > 0)
+				confidences[ghost.ordinal()]--;
+			
 			input.put(ghost.name()+"distance", distances[ghost.ordinal()]);
-
+			input.put(ghost.name()+"confidence", confidences[ghost.ordinal()]);
+			input.put(ghost.name()+"EdibleTime", (double) game.getGhostEdibleTime(ghost));
 		}
+		
+		
 		System.out.println(Arrays.toString(distances));
 		fe.evaluate("FuzzyMsPacMan", input, output);
-		double runaway = output.get("runAway");
-		System.out.println(runaway);
-		if(runaway > RUNAWAY_LIMIT)
+		for (GHOST ghost : GHOST.values()) {
+			fleeFromGhosts[ghost.ordinal()] = output.get("fleeFrom"+ghost.name());
+			eatGhosts[ghost.ordinal()] = output.get("eat"+ghost.name());
+		}
+		nearGhosts = 0;
+		edibleGhosts = 0;
+		for(double ghost : fleeFromGhosts) {
+			System.out.println(ghost);
+			if(ghost > 23) {
+				nearGhosts++;
+			}
+		}
+		for(double ghost : eatGhosts) {
+			System.out.println(ghost);
+			if(ghost > 23) {
+				edibleGhosts++;
+			}
+		}
+		
+		if(nearGhosts == 4) {
+			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), DataGetter.findNearestPowerPill(game), DM.PATH);
+		}
+		else if(nearGhosts > 1) {
 			return runAwayFromClosestGhost(game);
-		else
+		}
+		else {
 			return goToPills(game);
+		}
 	}
 
 

@@ -4,17 +4,19 @@ VAR_INPUT				// Define input variables
 	// GHOSTS ////////////////////////////////////////////////////////////////////////////////////////////
 	BLINKYdistance : REAL;
 	BLINKYconfidence : REAL;
+	BLINKYEdibleTime : REAL;
 	
 	PINKYdistance : REAL;
 	PINKYconfidence : REAL;
+	PINKYEdibleTime : REAL;
 	
 	INKYdistance : REAL;
 	INKYconfidence : REAL;
+	INKYEdibleTime : REAL;
 	
 	SUEdistance : REAL;
 	SUEconfidence : REAL;
-	
-	EdibleTime : REAL;
+	SUEEdibleTime : REAL;
 END_VAR
 
 VAR_OUTPUT				// Define output variables
@@ -79,7 +81,22 @@ FUZZIFY SUEconfidence
 END_FUZZIFY
 
 
-FUZZIFY EdibleTime
+FUZZIFY BLINKYEdibleTime
+	TERM soon := (5, 1) (10, 0) ; 
+	TERM normal := gauss 15 5;
+	TERM late := (15, 0) (100, 1) (200, 1);
+END_FUZZIFY
+FUZZIFY PINKYEdibleTime
+	TERM soon := (5, 1) (10, 0) ; 
+	TERM normal := gauss 15 5;
+	TERM late := (15, 0) (100, 1) (200, 1);
+END_FUZZIFY
+FUZZIFY INKYEdibleTime
+	TERM soon := (5, 1) (10, 0) ; 
+	TERM normal := gauss 15 5;
+	TERM late := (15, 0) (100, 1) (200, 1);
+END_FUZZIFY
+FUZZIFY SUEEdibleTime
 	TERM soon := (5, 1) (10, 0) ; 
 	TERM normal := gauss 15 5;
 	TERM late := (15, 0) (100, 1) (200, 1);
@@ -188,24 +205,83 @@ RULEBLOCK MsPacManRules
 	If one ghost-> eat pills
 	If no ghosts -> eat pills
 	*/
-	
-	 RULE 1 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND EdibleTime IS late
+	//Blinky rules
+	 RULE 1 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND BLINKYEdibleTime IS late
 	 	THEN fleeFromBLINKY IS high;
-	 RULE 2 : IF BLINKYdistance IS near AND BLINKYconfidence IS low AND EdibleTime IS late
+	 RULE 2 : IF BLINKYdistance IS near AND BLINKYconfidence IS low AND BLINKYEdibleTime IS late
 	 	THEN fleeFromBLINKY IS medium;
-	 RULE 3 : IF BLINKYdistance IS far AND BLINKYconfidence IS high AND EdibleTime IS late
+	 RULE 3 : IF BLINKYdistance IS far AND BLINKYconfidence IS high AND BLINKYEdibleTime IS late
 	 	THEN fleeFromBLINKY IS low;
-	 RULE 4 : IF BLINKYdistance IS far AND BLINKYconfidence IS low AND EdibleTime IS late
+	 RULE 4 : IF BLINKYdistance IS far AND BLINKYconfidence IS low AND BLINKYEdibleTime IS late
 	 	THEN fleeFromBLINKY IS low;
 	 	
-	 RULE 5 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND EdibleTime IS soon
+	 RULE 5 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND BLINKYEdibleTime IS soon
 	 	THEN eatBLINKY IS high;
-	 RULE 6 : IF BLINKYdistance IS near AND BLINKYconfidence IS low AND EdibleTime IS soon
+	 RULE 6 : IF BLINKYdistance IS near AND BLINKYconfidence IS low AND BLINKYEdibleTime IS soon
 	 	THEN eatBLINKY IS medium;
-	 RULE 7 : IF BLINKYdistance IS far AND BLINKYconfidence IS high AND EdibleTime IS soon
+	 RULE 7 : IF BLINKYdistance IS far AND BLINKYconfidence IS high AND BLINKYEdibleTime IS soon
 	 	THEN eatBLINKY IS low;
-	 RULE 8 : IF BLINKYdistance IS far AND BLINKYconfidence IS low AND EdibleTime IS soon
+	 RULE 8 : IF BLINKYdistance IS far AND BLINKYconfidence IS low AND BLINKYEdibleTime IS soon
 	 	THEN eatBLINKY IS low;
+	 	
+	 //Pinky rules
+	 RULE 9 : IF PINKYdistance IS near AND PINKYconfidence IS high AND PINKYEdibleTime IS late
+	 	THEN fleeFromPINKY IS high;
+	 RULE 10 : IF PINKYdistance IS near AND PINKYconfidence IS low AND PINKYEdibleTime IS late
+	 	THEN fleeFromPINKY IS medium;
+	 RULE 11 : IF PINKYdistance IS far AND PINKYconfidence IS high AND PINKYEdibleTime IS late
+	 	THEN fleeFromPINKY IS low;
+	 RULE 12 : IF PINKYdistance IS far AND PINKYconfidence IS low AND PINKYEdibleTime IS late
+	 	THEN fleeFromPINKY IS low;
+	 	
+	 RULE 13 : IF PINKYdistance IS near AND PINKYconfidence IS high AND PINKYEdibleTime IS soon
+	 	THEN eatPINKY IS high;
+	 RULE 14 : IF PINKYdistance IS near AND PINKYconfidence IS low AND PINKYEdibleTime IS soon
+	 	THEN eatPINKY IS medium;
+	 RULE 15 : IF PINKYdistance IS far AND PINKYconfidence IS high AND PINKYEdibleTime IS soon
+	 	THEN eatPINKY IS low;
+	 RULE 16 : IF PINKYdistance IS far AND PINKYconfidence IS low AND PINKYEdibleTime IS soon
+	 	THEN eatPINKY IS low;
+	 	
+	 //Inky rules
+	 RULE 17 : IF INKYdistance IS near AND INKYconfidence IS high AND INKYEdibleTime IS late
+	 	THEN fleeFromINKY IS high;
+	 RULE 18 : IF INKYdistance IS near AND INKYconfidence IS low AND INKYEdibleTime IS late
+	 	THEN fleeFromINKY IS medium;
+	 RULE 19 : IF INKYdistance IS far AND INKYconfidence IS high AND INKYEdibleTime IS late
+	 	THEN fleeFromINKY IS low;
+	 RULE 20 : IF INKYdistance IS far AND INKYconfidence IS low AND INKYEdibleTime IS late
+	 	THEN fleeFromINKY IS low;
+	 	
+	 RULE 21 : IF INKYdistance IS near AND INKYconfidence IS high AND INKYEdibleTime IS soon
+	 	THEN eatINKY IS high;
+	 RULE 22 : IF INKYdistance IS near AND INKYconfidence IS low AND INKYEdibleTime IS soon
+	 	THEN eatINKY IS medium;
+	 RULE 23 : IF INKYdistance IS far AND INKYconfidence IS high AND INKYEdibleTime IS soon
+	 	THEN eatINKY IS low;
+	 RULE 24 : IF INKYdistance IS far AND INKYconfidence IS low AND INKYEdibleTime IS soon
+	 	THEN eatINKY IS low;
+	 	
+	 //Sue rules
+	 RULE 25 : IF SUEdistance IS near AND SUEconfidence IS high AND SUEEdibleTime IS late
+	 	THEN fleeFromSUE IS high;
+	 RULE 26 : IF SUEdistance IS near AND SUEconfidence IS low AND SUEEdibleTime IS late
+	 	THEN fleeFromSUE IS medium;
+	 RULE 27 : IF SUEdistance IS far AND SUEconfidence IS high AND SUEEdibleTime IS late
+	 	THEN fleeFromSUE IS low;
+	 RULE 28 : IF SUEdistance IS far AND SUEconfidence IS low AND SUEEdibleTime IS late
+	 	THEN fleeFromSUE IS low;
+	 	
+	 RULE 29 : IF SUEdistance IS near AND SUEconfidence IS high AND SUEEdibleTime IS soon
+	 	THEN eatSUE IS high;
+	 RULE 30 : IF SUEdistance IS near AND SUEconfidence IS low AND SUEEdibleTime IS soon
+	 	THEN eatSUE IS medium;
+	 RULE 31 : IF SUEdistance IS far AND SUEconfidence IS high AND SUEEdibleTime IS soon
+	 	THEN eatSUE IS low;
+	 RULE 32 : IF SUEdistance IS far AND SUEconfidence IS low AND SUEEdibleTime IS soon
+	 	THEN eatSUE IS low;
+		
+	 	
 		
 END_RULEBLOCK
 
