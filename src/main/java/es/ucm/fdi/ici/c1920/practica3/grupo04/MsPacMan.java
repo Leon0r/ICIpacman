@@ -34,6 +34,7 @@ public final class MsPacMan extends PacmanController {
 	private double[] confidences = {MAX_CONFIDENCE,MAX_CONFIDENCE,MAX_CONFIDENCE,MAX_CONFIDENCE};
 	private double[] fleeFromGhosts = {0,0,0,0};
 	private double[] eatGhosts = {0,0,0,0};
+	private int[] powerPillIndexes; // has the powerpills indexes, -1 when pill eaten
 	private int current;
 	private int edibleGhosts = 0;
 	private int nearGhosts = 0;
@@ -43,6 +44,8 @@ public final class MsPacMan extends PacmanController {
 		current = game.getPacmanCurrentNodeIndex();
 		input.clear(); output.clear();
 
+		if(powerPillIndexes == null)
+			powerPillIndexes = game.getPowerPillIndices();
 
 		for (GHOST ghost : GHOST.values()) {
 			int index = game.getGhostCurrentNodeIndex(ghost);
@@ -56,13 +59,13 @@ public final class MsPacMan extends PacmanController {
 			}
 			else if (confidences[ghost.ordinal()] > 0)
 				confidences[ghost.ordinal()]--;
-			
+
 			input.put(ghost.name()+"distance", distances[ghost.ordinal()]);
 			input.put(ghost.name()+"confidence", confidences[ghost.ordinal()]);
 			input.put(ghost.name()+"EdibleTime", (double) game.getGhostEdibleTime(ghost));
 		}
-		
-		
+
+
 		System.out.println(Arrays.toString(distances));
 		fe.evaluate("FuzzyMsPacMan", input, output);
 		for (GHOST ghost : GHOST.values()) {
@@ -83,9 +86,10 @@ public final class MsPacMan extends PacmanController {
 				edibleGhosts++;
 			}
 		}
-		
-		if(nearGhosts == 4) {
-			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), DataGetter.findNearestPowerPill(game), DM.PATH);
+
+		if(nearGhosts == 4) { ///// ESTO PUEDE DEVOLVER -1!!!
+			int index = DataGetter.findNearestPowerPill(game, powerPillIndexes);
+			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), index, DM.PATH);
 		}
 		else if(nearGhosts > 1) {
 			return runAwayFromClosestGhost(game);
@@ -114,7 +118,7 @@ public final class MsPacMan extends PacmanController {
 	private MOVE goToPills(Game game) {
 		System.out.println("goToPills");
 		int[] pills = game.getActivePillsIndices();
-		int[] powerPills = game.getActivePowerPillsIndices();
+		//int[] powerPills = game.getActivePowerPillsIndices();
 
 		ArrayList<Integer> targets = new ArrayList<Integer>();
 
@@ -125,11 +129,12 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 
-		for (int i = 0; i < powerPills.length; i++)            //check with power pills are available
+		for (int i = 0; i < powerPillIndexes.length; i++)            //check with power pills are available
 		{
-			if ((game.isPowerPillStillAvailable(i)!=null) && game.isPowerPillStillAvailable(i)) {
-				targets.add(powerPills[i]);
-			}
+			if(powerPillIndexes[i] != -1)
+				if ((game.isPowerPillStillAvailable(i)!=null) && game.isPowerPillStillAvailable(i)) {
+					targets.add(powerPillIndexes[i]);
+				}
 		}
 
 		int[] targetsArray = new int[targets.size()];        //convert from ArrayList to array
@@ -137,7 +142,12 @@ public final class MsPacMan extends PacmanController {
 			targetsArray[i] = targets.get(i);
 		}
 		//return the next direction once the closest target has been identified
-		return game.getNextMoveTowardsTarget(current, game.getClosestNodeIndexFromNodeIndex(current, targetsArray, DM.PATH), DM.PATH);
+		int index = game.getClosestNodeIndexFromNodeIndex(current, targetsArray, DM.PATH);
+		for (int i = 0; i < powerPillIndexes.length; i++) {
+			if(powerPillIndexes[i] == index)
+				powerPillIndexes[i] = -1; // power pill is going to be eaten
+		}
+		return game.getNextMoveTowardsTarget(current, index, DM.PATH);
 
 	}
 }

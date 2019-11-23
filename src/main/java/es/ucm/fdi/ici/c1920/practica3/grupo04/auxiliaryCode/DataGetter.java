@@ -22,6 +22,22 @@ public class DataGetter {
 		return nearestP;
 	}
 
+	public static int findNearestPowerPill(Game game, int[] powerPillIndexes) {
+		int nearestP = -1;
+		double distance, nearestD = -1;
+
+		for(int pill : powerPillIndexes) {
+			if(pill != -1) {
+				distance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, DM.PATH);
+				if(nearestP == -1 || distance <= nearestD) {
+					nearestD = distance;
+					nearestP = pill;
+				}
+			}
+		}
+		return nearestP;
+	}
+
 	public static int findNearestPill(Game game) {
 		int nearestP = -1;
 		double distance, nearestD = -1;
@@ -75,11 +91,11 @@ public class DataGetter {
 				fin--;
 			}
 		}
-		
+
 		safeMoves = new MOVE[fin+1];
 		if(fin>0) {
-		for(int j = 0; j <= fin; j++)
-			safeMoves[j] = allMoves[j];
+			for(int j = 0; j <= fin; j++)
+				safeMoves[j] = allMoves[j];
 		}
 		return safeMoves;
 	}
