@@ -36,11 +36,14 @@ public final class MsPacMan extends PacmanController {
 	private double[] eatGhosts = {0,0,0,0};
 	private int[] powerPillIndexes; // has the powerpills indexes, -1 when pill eaten
 	private int current;
-	private int edibleGhosts = 0;
-	private int nearGhosts = 0;
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
+		MOVE move;
+		int edibleGhosts = 0;
+		int nearGhosts = 0;
+		MOVE[] safeMoves;
+		
 		current = game.getPacmanCurrentNodeIndex();
 		input.clear(); output.clear();
 
@@ -81,7 +84,7 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 		for(double ghost : eatGhosts) {
-			//System.out.println(ghost);
+			System.out.println(ghost);
 			if(ghost > 23) {
 				edibleGhosts++;
 			}
@@ -91,11 +94,9 @@ public final class MsPacMan extends PacmanController {
 			int index = DataGetter.findNearestPowerPill(game, powerPillIndexes);
 			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), index, DM.PATH);
 		}
-		else if(nearGhosts > 1) {
-			return runAwayFromClosestGhost(game);
-		}
 		else {
 			return goToPills(game);
+			//return DataGetter.findPathWithMostPills(game, game.getPossibleMoves(game.getPacmanCurrentNodeIndex()));
 		}
 	}
 

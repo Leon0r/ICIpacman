@@ -81,14 +81,16 @@ public class DataGetter {
 		int i;
 		for(GHOST gh : GHOST.values()) {
 			i = 0;
-			MOVE mToGh = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gh), DM.PATH);
+			if(game.getGhostCurrentNodeIndex(gh) != -1) {
+				MOVE mToGh = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gh), DM.PATH);
 
-			while(i<= fin && allMoves[i] != mToGh) {i++;}
-			if(i<=fin) {
-				mToGh = allMoves[fin];
-				allMoves[fin] = allMoves[i];
-				allMoves[i] = mToGh;
-				fin--;
+				while(i<= fin && allMoves[i] != mToGh) {i++;}
+				if(i<=fin) {
+					mToGh = allMoves[fin];
+					allMoves[fin] = allMoves[i];
+					allMoves[i] = mToGh;
+					fin--;
+				}
 			}
 		}
 
@@ -167,5 +169,12 @@ public class DataGetter {
 			}
 		}
 		return move;
+	}
+	public static boolean isPathSafe(Game game, MOVE[] moves, MOVE move) {
+		for(MOVE m : moves) {
+			if(m == move)
+				return true;
+		}
+		return false;
 	}
 }

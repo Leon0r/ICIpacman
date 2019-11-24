@@ -20,7 +20,6 @@ public class Main {
 			Executor executor = new Executor.Builder()
 					.setTickLimit(4000)
 					.setPOType(POType.RADIUS)
-					.setGhostPO(true)
 					.setPacmanPO(true)
 					.setGhostsMessage(false)
 					.setVisual(true)

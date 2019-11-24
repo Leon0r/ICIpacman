@@ -30,10 +30,19 @@ public final class Ghosts extends GhostController {
 	
 	private EnumMap<GHOST, MOVE> moves = new EnumMap<GHOST, MOVE>(GHOST.class);
 	
+	// Necesitamos mantener las ultimas posiciones conocidas de los elementos que vayamos a usar
+	int lastPacmanNode = -1;	
+	
+	HashMap<String, Integer> lastPPillNodes;
+	
+	HashMap<String, Integer> lastEdibleGhostNodes;
+	
 	public Ghosts() {
 		fe = new FuzzyEngine(FuzzyEngine.FUZZY_CONTROLLER.GHOSTS);
 		input = new HashMap<String,Double>();
 		output = new HashMap<String,Double>();
+		lastPPillNodes = new HashMap<String, Integer>();
+		lastEdibleGhostNodes = new HashMap<String, Integer>();
 		
 		for (int i = 0; i<4; i++) {
 			timersAggressive[i] = 0;
@@ -44,37 +53,71 @@ public final class Ghosts extends GhostController {
 	private void fillInput(Game game, GHOST ghostType, HashMap<String, Double> input) {
 		
 		// PACMAN DISTANCE
-		input.put("PACMANdistance", game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), DM.PATH));
+		
+		if(lastPacmanNode == -1)
+			game.getPacManInitialNodeIndex();
+		
+		if(lastPacmanNode != -1)
+			lastPacmanNode = lastPacmanNode;
+		
+		input.put("PACMANdistance", game.getDistance(game.getGhostCurrentNodeIndex(ghostType), lastPacmanNode, DM.PATH));
+		
+		
+		// POWER PILL DISTANCES
+		
+		for(int i = 0; i < 4; i++) {
+			// if(game.getPowerPillIndices()[i] != -1) { // Esto te dice las posiciones de las power pills las veas o no			
+				
+				if(game.isNodeObservable(game.getPowerPillIndices()[i]) && game.isPowerPillStillAvailable(i))
+					lastPPillNodes.put("powerpill" + game.getPowerPillIndices()[i], game.getPowerPillIndices()[i]);
+				else if(lastPPillNodes.containsKey("powerpill" + game.getPowerPillIndices()[i]))
+					lastPPillNodes.remove("powerpill" + game.getPowerPillIndices()[i]);
+			
+		}
 		
 		// NEAREST POWER PILL DISTANCE
 		double minDist = Double.MAX_VALUE;
 		double auxDist = 0;		
-		for (int i = 0; i<game.getActivePowerPillsIndices().length; i++) {
-			auxDist = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getActivePowerPillsIndices()[i], DM.PATH);
-			if (minDist > auxDist) 
-				minDist = auxDist;
-			
-		}		
+		for (int i = 0; i<lastPPillNodes.size(); i++) {
+			if(lastPPillNodes.containsKey("powerpill" + game.getPowerPillIndices()[i])) {
+				auxDist = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), lastPPillNodes.get("powerpill" + game.getPowerPillIndices()[i]), DM.PATH);
+				if (minDist > auxDist) 
+					minDist = auxDist;
+			}			
+		}
+		
 		input.put("NearestPPdistance", minDist);		
 		
 		
 		// NEAREST POWER PILL DISTANCE TO PACMAN
 		minDist = Double.MAX_VALUE;
 		auxDist = 0;		
-		for (int i = 0; i<game.getActivePowerPillsIndices().length; i++) {
-			auxDist = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getActivePowerPillsIndices()[i], DM.PATH);
-			if (minDist > auxDist) 
-				minDist = auxDist;
+		for (int i = 0; i<lastPPillNodes.size(); i++) {
+			if(lastPPillNodes.containsKey("powerpill" + game.getPowerPillIndices()[i])) {
+				auxDist = game.getDistance(lastPacmanNode, lastPPillNodes.get("powerpill" + game.getPowerPillIndices()[i]), DM.PATH);
+				if (minDist > auxDist) 
+					minDist = auxDist;
+			}
 		}		
 		input.put("NearestPPdistanceToPACMAN", minDist);
 		
 		
-		// NEAREST EDIBLEGHOST DISTANCE		
+		// NEAREST EDIBLEGHOST DISTANCE
+		for (GHOST gType : GHOST.values()) {
+			if(gType != ghostType  && game.getGhostCurrentNodeIndex(gType) != -1 && game.isNodeObservable(game.getGhostCurrentNodeIndex(gType))
+					&& game.isGhostEdible(gType) && game.getGhostLairTime(gType) <= 0) {
+				lastEdibleGhostNodes.put(gType.toString(), game.getGhostCurrentNodeIndex(gType));
+			}
+			else
+				lastEdibleGhostNodes.remove(gType.toString());			
+		}
+		
+		
 		minDist = Double.MAX_VALUE;
 		auxDist = 0;		
 		for (GHOST gType : GHOST.values()) {
-			if(gType != ghostType && game.isGhostEdible(gType) && game.getGhostLairTime(gType) <= 0) {
-				auxDist = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(gType), DM.PATH);
+			if(lastEdibleGhostNodes.containsKey(gType.toString())) {
+				auxDist = game.getDistance(lastPacmanNode, lastEdibleGhostNodes.get(gType.toString()), DM.PATH);
 				if (minDist > auxDist) {
 					minDist = auxDist;
 				}
@@ -105,6 +148,8 @@ public final class Ghosts extends GhostController {
 			}
     	}
     	
+
+    	
     	for(GHOST ghostType: GHOST.values()) {
 	        input.clear(); 
 	        output.clear();
@@ -122,14 +167,16 @@ public final class Ghosts extends GhostController {
     	return moves;
     }
     
-    private MOVE logic(Game game, GHOST ghostType, HashMap<String,Double> output, long timeDue) {
+    private MOVE logic(Game game, GHOST ghostType, HashMap<String,Double> output, long timeDue) {    	
+    	
+    	if(game.getGhostLairTime(ghostType) > 0) {
     	
     	if(!game.isGhostEdible(ghostType)) {
     		
     		if((output.get("goToPacman") > PACMAN_IS_NEAR || timersStrategic[ghostType.ordinal()] >= TIME_LIMIT) && timersAggressive[ghostType.ordinal()] < TIME_LIMIT) {
     			timersAggressive[ghostType.ordinal()]++;
     			timersStrategic[ghostType.ordinal()] = 0;
-    			return game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghostType), DM.EUCLID);
+    			return game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), lastPacmanNode, game.getGhostLastMoveMade(ghostType), DM.EUCLID);
     		}
     		else if ((output.get("goToPacman") < PACMAN_IS_NEAR || timersAggressive[ghostType.ordinal()] >= TIME_LIMIT) && timersStrategic[ghostType.ordinal()] < TIME_LIMIT) {
     			timersStrategic[ghostType.ordinal()]++;
@@ -150,12 +197,16 @@ public final class Ghosts extends GhostController {
     		else
     		{
     			// Huyo de pacman directamente
-    			return game.getNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghostType),  DM.EUCLID);
+    			return game.getNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghostType), lastPacmanNode, game.getGhostLastMoveMade(ghostType),  DM.EUCLID);
     		}
     	}
     	
     	// Por seguridad
 		return randomMovement(game);
+    	}
+    	else { // Sigo en la carcel
+    		return MOVE.NEUTRAL;
+    	}
     }
     
     private boolean nonEdibleGhosts(Game game, GHOST ghostType) {
