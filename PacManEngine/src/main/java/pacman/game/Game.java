@@ -1840,11 +1840,12 @@ public final class Game {
      */
     @SuppressWarnings({"WeakerAccess", "unused"})
     public MOVE getApproximateNextMoveTowardsTarget(int fromNodeIndex, int toNodeIndex, MOVE lastMoveMade, DM distanceMeasure) {
-        MOVE move = null;
+        MOVE move = MOVE.NEUTRAL;
         if((toNodeIndex == -1)||(fromNodeIndex == -1))
         	return MOVE.NEUTRAL;
+        
+        try {
         double minDistance = Integer.MAX_VALUE;
-
         for (Entry<MOVE, Integer> entry : currentMaze.graph[fromNodeIndex].allNeighbourhoods.get(lastMoveMade).entrySet()) {
             double distance = getDistance(entry.getValue(), toNodeIndex, distanceMeasure);
 
@@ -1852,6 +1853,10 @@ public final class Game {
                 minDistance = distance;
                 move = entry.getKey();
             }
+        }
+        }catch(Exception e)
+        {
+        	System.err.println(e.getMessage());
         }
 
         return move;
@@ -1868,17 +1873,21 @@ public final class Game {
      */
     @SuppressWarnings({"WeakerAccess", "unused"})
     public MOVE getApproximateNextMoveAwayFromTarget(int fromNodeIndex, int toNodeIndex, MOVE lastMoveMade, DM distanceMeasure) {
-        MOVE move = null;
+        MOVE move = MOVE.NEUTRAL;
 
+        try {
         double maxDistance = Integer.MIN_VALUE;
 
-        for (Entry<MOVE, Integer> entry : currentMaze.graph[fromNodeIndex].allNeighbourhoods.get(lastMoveMade).entrySet()) {
-            double distance = getDistance(entry.getValue(), toNodeIndex, distanceMeasure);
-
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                move = entry.getKey();
-            }
+	        for (Entry<MOVE, Integer> entry : currentMaze.graph[fromNodeIndex].allNeighbourhoods.get(lastMoveMade).entrySet()) {
+	            double distance = getDistance(entry.getValue(), toNodeIndex, distanceMeasure);
+	
+	            if (distance > maxDistance) {
+	                maxDistance = distance;
+	                move = entry.getKey();
+	            }
+	        }
+        } catch(Exception e) {
+        	System.err.println(e.getMessage());
         }
 
         return move;
