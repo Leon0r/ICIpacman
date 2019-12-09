@@ -4,10 +4,8 @@ import pacman.controllers.PacmanController;
 
 import java.util.Random;
 
-import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import pacman.game.internal.Node;
 
 
 public final class MsPacMan extends PacmanController {

@@ -19,8 +19,7 @@ public class Main {
 		while(i<j) {
 			Executor executor = new Executor.Builder()
 					.setTickLimit(4000)
-					.setPOType(POType.RADIUS)
-					.setPacmanPO(true)
+					.setPacmanPO(false)
 					.setGhostsMessage(false)
 					.setVisual(true)
 					.setScaleFactor(2)
