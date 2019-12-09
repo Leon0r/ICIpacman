@@ -51,7 +51,8 @@ public class Executor {
     private final Random rnd = new Random();
     private final Function<Game, String> peek;
     private final Logger logger = LoggerFactory.getLogger(Executor.class);
-    private static String VERSION = "1.1 (no reverse)";
+	private boolean pacmanPOvisual;
+    private static String VERSION = "1.3.0 (Case-Based Reasoning support)";
 
     public static class Builder {
         private boolean pacmanPO = false;
@@ -66,6 +67,7 @@ public class Executor {
         private POType poType = POType.LOS;
         private int sightLimit = 50;
         private Function<Game, String> peek = null;
+		private boolean pacmanPOvisual;
 
         public Builder setPacmanPO(boolean po) {
             this.pacmanPO = po;
@@ -134,9 +136,14 @@ public class Executor {
         }
 
         public Executor build() {
-        	System.err.println("MsPacMan Engine - Ingenieria de Comportamientos Intelignetes. Version "+Executor.VERSION);
-            return new Executor(pacmanPO, ghostPO, ghostsMessage, messenger, scaleFactor, setDaemon, visuals, tickLimit, timeLimit, poType, sightLimit, peek);
+        	System.err.println("MsPacMan Engine - Ingeniería de Comportamientos Inteligentes. Version "+Executor.VERSION);
+            return new Executor(pacmanPO, ghostPO, ghostsMessage, messenger, scaleFactor, setDaemon, visuals, tickLimit, timeLimit, poType, sightLimit, peek, pacmanPOvisual);
         }
+
+		public Builder setPacmanPOvisual(boolean b) {
+			this.pacmanPOvisual = b;
+			return this;
+		}
     }
 
     private Executor(
@@ -151,7 +158,8 @@ public class Executor {
             int timeLimit,
             POType poType,
             int sightLimit,
-            Function<Game, String> peek
+            Function<Game, String> peek,
+            boolean pacmanPOvisual
             ) {
         this.pacmanPO = pacmanPO;
         this.ghostPO = ghostPO;
@@ -165,6 +173,7 @@ public class Executor {
         this.poType = poType;
         this.sightLimit = sightLimit;
         this.peek = peek;
+        this.pacmanPOvisual = pacmanPOvisual;
     }
 
     private static void writeStat(FileWriter writer, Stats stat, int i) throws IOException {
@@ -235,6 +244,8 @@ public class Executor {
         GhostController ghostControllerCopy = ghostController.copy(ghostPO);
         Game game;
 
+        precompute(pacManController, ghostController);
+
         Long startTime = System.currentTimeMillis();
         for (int i = 0; i < trials; ) {
             try {
@@ -247,7 +258,7 @@ public class Executor {
                     handlePeek(game);
                     game.advanceGame(
                             pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
-                            ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+                            ghostControllerCopy.getMove(getGhostsCopy(game), System.currentTimeMillis() + timeLimit));
                 }
                 stats.add(game.getScore());
                 ticks.add(game.getCurrentLevelTime());
@@ -261,6 +272,9 @@ public class Executor {
         stats.setMsTaken(timeTaken);
         ticks.setMsTaken(timeTaken);
 
+        postcompute(pacManController, ghostController);
+
+        
         return new Stats[]{stats, ticks};
     }
 
@@ -279,6 +293,8 @@ public class Executor {
         GhostController ghostControllerCopy = ghostController.copy(ghostPO);
         Game game;
 
+        precompute(pacManController, ghostController);
+
         Long startTime = System.currentTimeMillis();
         for (int i = 0; i < trials; i++) {
             game = setupGame();
@@ -287,13 +303,15 @@ public class Executor {
                 handlePeek(game);
                 game.advanceGame(
                         pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
-                        ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+                        ghostControllerCopy.getMove(getGhostsCopy(game), System.currentTimeMillis() + timeLimit));
             }
             stats.add(game.getScore());
             ticks.add(game.getTotalTime());
         }
         stats.setMsTaken(System.currentTimeMillis() - startTime);
         ticks.setMsTaken(System.currentTimeMillis() - startTime);
+
+        postcompute(pacManController, ghostController);
 
         return new Stats[]{stats, ticks};
     }
@@ -310,6 +328,8 @@ public class Executor {
     public int runGame(Controller<MOVE> pacManController, GhostController ghostController, int delay) {
         Game game = setupGame();
 
+        precompute(pacManController, ghostController);
+        
         GameView gv = (visuals) ? setupGameView(pacManController, game) : null;
 
         GhostController ghostControllerCopy = ghostController.copy(ghostPO);
@@ -321,7 +341,7 @@ public class Executor {
             handlePeek(game);
             game.advanceGame(
                     pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
-                    ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+                    ghostControllerCopy.getMove(getGhostsCopy(game), System.currentTimeMillis() + timeLimit));
 
             try {
                 Thread.sleep(delay);
@@ -331,12 +351,34 @@ public class Executor {
             if (visuals) {
                 gv.repaint();
             }
-        }       
+        }
+        System.out.println(game.getScore());
+        
+        postcompute(pacManController, ghostController);
+        
         return game.getScore();
     }
 
-    private Game getPacmanCopy(Game game) {
+    private void postcompute(Controller<MOVE> pacManController, GhostController ghostController) {
+		pacManController.postCompute();
+		ghostController.postCompute();
+	}
+
+	private void precompute(Controller<MOVE> pacManController, GhostController ghostController) {
+		String ghostName = ghostController.getClass().getCanonicalName();
+		String pacManName = pacManController.getClass().getCanonicalName();
+		
+		pacManController.preCompute(ghostName);
+		ghostController.preCompute(pacManName);
+	}
+
+	private Game getPacmanCopy(Game game) {
         return game.copy((pacmanPO) ? Game.PACMAN : Game.CLONE);
+    }
+    
+    private Game getGhostsCopy(Game game) {
+    	return game.copy((ghostPO) ? Game.ANY_GHOST : Game.CLONE);
+       
     }
 
     private GameView setupGameView(Controller<MOVE> pacManController, Game game) {
@@ -344,6 +386,7 @@ public class Executor {
         gv = new GameView(game, setDaemon);
         gv.setScaleFactor(scaleFactor);
         gv.showGame();
+        if(pacmanPOvisual) gv.setPO(this.pacmanPO);
         if (pacManController instanceof HumanController) {
             gv.setFocusable(true);
             gv.requestFocus();
@@ -370,6 +413,8 @@ public class Executor {
         GameView gv = (visuals) ? setupGameView(pacManController, game) : null;
         GhostController ghostControllerCopy = ghostController.copy(ghostPO);
 
+        precompute(pacManController, ghostController);
+        
         new Thread(pacManController).start();
         new Thread(ghostControllerCopy).start();
 
@@ -379,7 +424,7 @@ public class Executor {
             }
             handlePeek(game);
             pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            ghostControllerCopy.update(getGhostsCopy(game), System.currentTimeMillis() + DELAY);
 
             try {
                 Thread.sleep(DELAY);
@@ -396,6 +441,9 @@ public class Executor {
 
         pacManController.terminate();
         ghostControllerCopy.terminate();
+        
+        postcompute(pacManController, ghostController);
+
     }
 
     /**
@@ -415,6 +463,8 @@ public class Executor {
         GhostController ghostControllerCopy = ghostController.copy(ghostPO);
         Stats stats = new Stats(desc);
 
+        precompute(pacManController, ghostController);
+
         new Thread(pacManController).start();
         new Thread(ghostControllerCopy).start();
         while (!game.gameOver()) {
@@ -423,7 +473,7 @@ public class Executor {
             }
             handlePeek(game);
             pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            ghostControllerCopy.update(getGhostsCopy(game), System.currentTimeMillis() + DELAY);
 
             try {
                 long waited = DELAY / INTERVAL_WAIT;
@@ -454,6 +504,9 @@ public class Executor {
         pacManController.terminate();
         ghostControllerCopy.terminate();
         stats.add(game.getScore());
+        
+        postcompute(pacManController, ghostController);
+
         return stats;
     }
 
@@ -471,6 +524,8 @@ public class Executor {
 
         Game game = setupGame();
 
+        precompute(pacManController, ghostController);
+        
         GameView gv = null;
         GhostController ghostControllerCopy = ghostController.copy(ghostPO);
 
@@ -497,7 +552,7 @@ public class Executor {
             }
             handlePeek(game);
             pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            ghostControllerCopy.update(getGhostsCopy(game), System.currentTimeMillis() + DELAY);
 
             try {
                 Thread.sleep(DELAY);
@@ -518,6 +573,9 @@ public class Executor {
         pacManController.terminate();
         ghostControllerCopy.terminate();
 
+        postcompute(pacManController, ghostController);
+
+        
         saveToFile(replay.toString(), fileName, false);
         return stats;
     }

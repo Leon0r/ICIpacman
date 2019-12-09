@@ -137,4 +137,12 @@ public abstract class Controller<T> implements Runnable {
     public final void setName(String name) {
         this.name = name;
     }
+    
+    public void preCompute(String opponent) {
+    	System.out.println("Precompute. Oponent: "+opponent);
+    }
+    
+    public  void postCompute() {
+    	System.out.println("Postcompute.");
+    }
 }
