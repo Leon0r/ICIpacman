@@ -23,7 +23,7 @@ import pacman.game.Constants.MOVE;
 
 public class jsonParser{
 	
-	public static void read(String name) {		
+	public static void readGhost(String name) {		
 		//String[] nameParts = name.split(".");
 		
 		ArrayList<JSONObject> json=new ArrayList<JSONObject>();
@@ -124,7 +124,7 @@ public class jsonParser{
 	    }
 	}
 	
-	public static void write(String name, List<GhostCase> ghostCases) {
+	public static void writeGhost(String name, List<GhostCase> ghostCases) {
 		
 		// writing JSON to file:"JSONExample.json" in cwd 
         PrintWriter pw = null;

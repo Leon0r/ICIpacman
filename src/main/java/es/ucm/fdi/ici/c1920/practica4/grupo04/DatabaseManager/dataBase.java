@@ -1,5 +1,6 @@
 package es.ucm.fdi.ici.c1920.practica4.grupo04.DatabaseManager;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import es.ucm.fdi.ici.c1920.practica4.grupo04.DatabaseManager.jsonParser;
@@ -171,10 +172,10 @@ public class DataBase {
 	}
 	
 	public static void readGhostCases() {		
-		jsonParser.read(opponentGhostName);
+		jsonParser.readGhost(opponentGhostName);
 	}
 	
 	public static void printGhostCases() {
-		jsonParser.write(opponentGhostName, generatedGhostCases);		
+		jsonParser.writeGhost(opponentGhostName, generatedGhostCases);		
 	}
 }
