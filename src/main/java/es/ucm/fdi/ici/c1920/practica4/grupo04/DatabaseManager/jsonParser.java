@@ -15,7 +15,11 @@ import java.util.Iterator;
 import org.json.simple.parser.*; 
 
 import es.ucm.fdi.ici.c1920.practica4.grupo04.DatabaseManager.*;
+import pacman.game.Constants.MOVE;
+
 import java.util.List;
+
+import pacman.game.Constants.MOVE;
 
 public class jsonParser{
 	
@@ -61,7 +65,7 @@ public class jsonParser{
 		    JSONObject jo = json.get(j);
 	    	
 	    	long nearestPPillToPacman = (long) jo.get("nearestPPillToPacman");
-			long nonEdibleGhosts = (long) jo.get("nonEdibleGhosts");
+			long move = (long) jo.get("move");
 			
 			
 			double[] distanceToPacman = new double[4];			
@@ -113,8 +117,8 @@ public class jsonParser{
 				activePPills[p] =  (boolean) lm.get(p);
 			}
 			
-			GhostCase c = new GhostCase(distanceToPacman, edibleGhosts, distanceToPPills, 
-					distancePCToPPills, (int) nearestPPillToPacman, (int) nonEdibleGhosts);
+			GhostCase c = new GhostCase(distanceToPacman, edibleGhosts, 
+					distanceToPPills, distancePCToPPills, activePPills, (int)nearestPPillToPacman, (int)move );
 			
 			DataBase.addCase(c);
 	    }
@@ -139,8 +143,26 @@ public class jsonParser{
 			JSONObject jo = new JSONObject();			
 	          
 	        // putting data to JSONObject 
-	        jo.put("nonEdibleGhosts", c.nonEdibleGhosts); 
 	        jo.put("nearestPPillToPacman", c.nearestPPillToPacman); 
+	        
+	        int move = 0;
+	        
+	        switch (c.movement) {
+			case LEFT:
+				move = 0;
+				break;
+			case UP:
+				move = 1;
+				break;
+			case RIGHT:
+				move = 2;
+				break;
+			case DOWN:
+				move = 3;
+				break;
+	        }
+	        
+	        jo.put("movement", move); 
 	        
 	        
 	        JSONArray distanceToPacman = new JSONArray();	        
@@ -151,12 +173,18 @@ public class jsonParser{
 	        JSONArray edibleGhosts = new JSONArray();	        
 	        for(int j = 0; j<4; j++) 
 	        	edibleGhosts.add(c.edibleGhosts[j]);	        	       
-	        jo.put("edibleGhosts", edibleGhosts);
+	        jo.put("edibleGhosts", edibleGhosts);	        
 	        
 	        JSONArray distancePCToPPills = new JSONArray();	        
 	        for(int j = 0; j<4; j++) 
 	        	distancePCToPPills.add(c.distancePCToPPills[j]);	        	       
 	        jo.put("distancePCToPPills", distancePCToPPills);
+	        
+	        JSONArray activePPills = new JSONArray();	        
+	        for(int j = 0; j<4; j++) 
+	        	activePPills.add(c.activePPills[j]);	        	       
+	        jo.put("activePPills", activePPills);
+	          
 	        
 	        JSONArray distanceToPPills = new JSONArray();
 	        for(int h = 0; h < 4; h++) {
