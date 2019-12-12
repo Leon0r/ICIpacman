@@ -1,5 +1,7 @@
 package es.ucm.fdi.ici.c1920.practica4.grupo04.DatabaseManager;
 
+import pacman.game.Constants.MOVE;
+
 public class MsPacmanCase {
 	public boolean[] edibleGhosts = new boolean[4];
 	public int [] characterIndex = new int[5];
@@ -8,8 +10,10 @@ public class MsPacmanCase {
 	public int nearestPPillToPacman;
 	public int nonEdibleGhosts;
 	
+	public MOVE movement; // the solution movement for the case
+	
 	public MsPacmanCase(boolean[] edibleGhosts, int [] characterIndex, int [] characterLastMove,
-						boolean[] activePPills, int nearestPPillToPacman, int nonEdibleGhosts)
+						boolean[] activePPills, int nearestPPillToPacman, int nonEdibleGhosts, int movement)
 	{
 		this.edibleGhosts = edibleGhosts;
 		this.characterIndex = characterIndex;
@@ -17,5 +21,7 @@ public class MsPacmanCase {
 		this.activePPills = activePPills;
 		this.nearestPPillToPacman = nearestPPillToPacman;
 		this.nonEdibleGhosts = nonEdibleGhosts;	
+		
+		this.movement = MOVE.values()[movement];
 	}
 }
