@@ -52,10 +52,8 @@ public class PacmanDataBase {
 		for(int h = 0; h < MsPacmanCases.size(); h++ ) {
 			// Para cada caso comparamos cuanto se parece al caso a comparar
 			MsPacmanCase c = MsPacmanCases.get(h);
-
-
+			
 			///-------------------------------------------------------------
-
 			double totalValue = 0.0; 	// Suma total acumulada de cada atributo			
 			double totalCases = 3.0;	// Atributos totales			
 			double aux = 0.0;		// Variable auxiliar para la suma
@@ -208,11 +206,11 @@ public class PacmanDataBase {
 
 	}
 
-	public static void readGhostCases() {		
+	public static void readPacmanCases() {		
 		//jsonParser.readGhost(opponentGhostName);
 	}
 
-	public static void printGhostCases() {
+	public static void printPacmanCases() {
 		// jsonParser.writeGhost(opponentGhostName, generatedMsPacmanCases);		
 	}
 }
