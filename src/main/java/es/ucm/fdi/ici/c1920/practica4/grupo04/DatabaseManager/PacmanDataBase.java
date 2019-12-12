@@ -21,15 +21,22 @@ public class PacmanDataBase {
 
 	static String opponentGhostName;
 	static int casesChecked = 5;
-
+	static MsPacmanCase lastPacmanCase = null;
+	
 	public static void setOpponentGhostName(String name) {
 		opponentGhostName = name;
 	}
 
 	public static void addGeneratedCase(MsPacmanCase pacmanCase) {
-		generatedMsPacmanCases.add(pacmanCase);
+		if(lastPacmanCase != null)
+			generatedMsPacmanCases.add(lastPacmanCase);
+		lastPacmanCase = pacmanCase;
 	}
 
+	public static void removeLastCase() {
+		lastPacmanCase = null;
+	}
+	
 	public static void addCase(MsPacmanCase pacmanCase) {
 		MsPacmanCases.add(pacmanCase);
 	}
