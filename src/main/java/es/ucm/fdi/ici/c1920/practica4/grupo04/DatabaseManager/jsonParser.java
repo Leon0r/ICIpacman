@@ -23,7 +23,7 @@ public class jsonParser{
 		ArrayList<JSONObject> json=new ArrayList<JSONObject>();
 	    JSONObject obj;
 	    // The name of the file to open.
-	    String fileName = "bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + ".json";
+	    String fileName = "bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/".replace("/", java.io.File.separator) + name + ".json";
 
 	    // This will reference one line at a time
 	    String line = null;
@@ -148,7 +148,7 @@ public class jsonParser{
 
 	public static void writeGhostCases(String name, List<GhostCase> ghostCases, List<GhostCase> generatedGhostCases) {
 		
-		File file = new File("bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + /*nameParts[nameParts.length-1] + */".json");
+		File file = new File("bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/".replace("/", java.io.File.separator) + name + /*nameParts[nameParts.length-1] + */".json");
         if (file.exists()) {
             file.delete(); //you might want to check if delete was successfull
         }
@@ -156,7 +156,7 @@ public class jsonParser{
         PrintWriter pw = null;
         
 		try {
-			pw = new PrintWriter("bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + /*nameParts[nameParts.length-1] + */".json");
+			pw = new PrintWriter("bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/".replace("/", java.io.File.separator) + name + /*nameParts[nameParts.length-1] + */".json");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -411,6 +411,12 @@ public class jsonParser{
 
 		fullName += "data." + className;
 		
+		
+		File file = new File("bin"+ java.io.File.separator + fullName.replace(".", java.io.File.separator) + ".json");
+        if (file.exists()) {
+            file.delete(); //you might want to check if delete was successfull
+        }
+		
 		PrintWriter pw = null;
 
 		try {
@@ -430,7 +436,7 @@ public class jsonParser{
 			jo.put("nearestPPillToPacman", c.nearestPPillToPacman);	  
 
 			int move = c.movement.ordinal();
-			jo.put("movement", move);
+			jo.put("move", move);
 
 			JSONArray edibleGhosts = new JSONArray();
 			for(int j = 0; j<4; j++) 

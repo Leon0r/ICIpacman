@@ -10,7 +10,7 @@ public class MsPacmanCase {
 	public int nearestPPillToPacman;
 	
 	public MOVE movement; // the solution movement for the case
-	
+
 	public MsPacmanCase(boolean[] edibleGhosts, int [] characterIndex, int [] characterLastMove,
 						int[] activePPills, int nearestPPillToPacman, int movement)
 	{

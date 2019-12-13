@@ -24,7 +24,7 @@ public final class MsPacMan extends PacmanController {
 	MsPacmanCase pacmanCase = null;
 
 	// Numero minimo de cruces que se han superado sin morir
-	int crossesSurpassed = 10;
+	int prevPoints, postPoints;
 
 
 	@Override
@@ -70,7 +70,8 @@ public final class MsPacMan extends PacmanController {
 	public MOVE getMove(Game game, long timeDue) {
 
 		MOVE[] m = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
-
+		prevPoints = game.getScore();
+		
 		if(m.length > 1) {
 			if(game.wasPacManEaten()) {
 				PacmanDataBase.removeLastCase();
@@ -78,10 +79,16 @@ public final class MsPacMan extends PacmanController {
 
 			generateCase(game);
 			MOVE move = PacmanDataBase.comparePacmanCase(pacmanCase, game);
-
-			pacmanCase.movement = move;
-			PacmanDataBase.addGeneratedCase(pacmanCase);
-			return move;
+			
+			int pill = game.getNeighbour(game.getPacmanCurrentNodeIndex(), move);
+			postPoints = prevPoints + (game.getPillIndex(pill) != -1? 1:-1);
+			
+			if(prevPoints < postPoints) {
+				pacmanCase.movement = move;
+				PacmanDataBase.addGeneratedCase(pacmanCase);
+				return move;
+			}
+			return m[0];
 		}	
 		else {
 			return m[0];

@@ -11,7 +11,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		int j = 1;
+		int j = 10;
 		int i = 0;
 		int totalScore = 0;
 		
@@ -27,7 +27,7 @@ public class Main {
 			PacmanController pacman = new MsPacMan();
 			GhostController ghosts = new Ghosts();
 			
-			int score = executor.runGame(pacman, ghosts, 10);
+			int score = executor.runGame(pacman, ghosts, 40);
 			System.out.println(score);
 			totalScore += score;
 			
