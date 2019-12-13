@@ -15,13 +15,22 @@ import java.util.List;
 
 public class jsonParser{
 
-	public static void readGhost(String name) {		
-		//String[] nameParts = name.split(".");
+	public static void readGhostCases(String name) {
 
 		ArrayList<JSONObject> json=new ArrayList<JSONObject>();
 		JSONObject obj;
+		
+		String fullName = "";
+		String[] aux = name.split("\\.");
+		String className = aux[aux.length-1];
+
+		for(int i = 0; i<aux.length-1; i++)
+			fullName += aux[i] + ".";
+
+		fullName += "data." + className;
+
 		// The name of the file to open.
-		String fileName = "bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + ".json";
+		String fileName = "bin"+ java.io.File.separator + fullName.replace(".", java.io.File.separator) + ".json";
 
 		// This will reference one line at a time
 		String line = null;
@@ -71,21 +80,7 @@ public class jsonParser{
 			lm = (JSONArray) jo.get("edibleGhosts");			
 			for(int p = 0; p < 4; p++) {				 
 				edibleGhosts[p] =  (boolean) lm.get(p);
-			}
-
-			int [] characterIndex = new int[5];
-			lm = (JSONArray) jo.get("characterIndex");			
-			for(int p = 0; p < 5; p++) {
-				long l = (long) lm.get(p);
-				characterIndex[p] =  (int)l;
-			}
-
-			int [] characterLastMove = new int[5];
-			lm = (JSONArray) jo.get("characterLastMove");			
-			for(int p = 0; p < 5; p++) {
-				long l = (long) lm.get(p);
-				characterLastMove[p] =  (int)l;
-			}
+			}			
 
 			double [][] distanceToPPills = new double[4][4];
 			lm = (JSONArray) jo.get("distanceToPPills");
@@ -116,13 +111,22 @@ public class jsonParser{
 		}
 	}
 
-	public static void writeGhost(String name, List<GhostCase> ghostCases) {
+	public static void writeGhostCases(String name, List<GhostCase> ghostCases)  {
 
 		// writing JSON to file:"JSONExample.json" in cwd 
+		String fullName = "";
+		String[] aux = name.split("\\.");
+		String className = aux[aux.length-1];
+
+		for(int i = 0; i<aux.length-1; i++)
+			fullName += aux[i] + ".";
+
+		fullName += "data." + className;
+		
 		PrintWriter pw = null;
 
 		try {
-			pw = new PrintWriter("bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + /*nameParts[nameParts.length-1] + */".json");
+			pw = new PrintWriter("bin"+ java.io.File.separator + fullName.replace(".", java.io.File.separator) + ".json");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,27 +158,26 @@ public class jsonParser{
 				break;
 			}
 
-			jo.put("movement", move); 
+			jo.put("move", move); 	        
 
-
-			JSONArray distanceToPacman = new JSONArray();
+			JSONArray distanceToPacman = new JSONArray();	        
 			for(int j = 0; j<4; j++) 
-				distanceToPacman.add(c.distanceToPacman[j]);
+				distanceToPacman.add(c.distanceToPacman[j]);	        	       
 			jo.put("distanceToPacman", distanceToPacman);
 
-			JSONArray edibleGhosts = new JSONArray();
+			JSONArray edibleGhosts = new JSONArray();	        
 			for(int j = 0; j<4; j++) 
-				edibleGhosts.add(c.edibleGhosts[j]);
-			jo.put("edibleGhosts", edibleGhosts);
+				edibleGhosts.add(c.edibleGhosts[j]);	        	       
+			jo.put("edibleGhosts", edibleGhosts);	        
 
-			JSONArray distancePCToPPills = new JSONArray();
+			JSONArray distancePCToPPills = new JSONArray();	        
 			for(int j = 0; j<4; j++) 
 				distancePCToPPills.add(c.distancePCToPPills[j]);	        	       
 			jo.put("distancePCToPPills", distancePCToPPills);
 
-			JSONArray activePPills = new JSONArray();
+			JSONArray activePPills = new JSONArray();	        
 			for(int j = 0; j<4; j++) 
-				activePPills.add(c.activePPills[j]);
+				activePPills.add(c.activePPills[j]);	        	       
 			jo.put("activePPills", activePPills);
 
 
@@ -182,7 +185,7 @@ public class jsonParser{
 			for(int h = 0; h < 4; h++) {
 				JSONArray dPills = new JSONArray();
 				for(int j = 0; j<4; j++) 
-					dPills.add(c.distanceToPPills[h][j]);
+					dPills.add(c.distanceToPPills[h][j]);	        	       
 				distanceToPPills.add(dPills);
 			}
 
@@ -199,13 +202,21 @@ public class jsonParser{
 	}
 
 	public static void readPacman(String name) {		
-		//String[] nameParts = name.split(".");
-
 		ArrayList<JSONObject> json=new ArrayList<JSONObject>();
 		JSONObject obj;
-		// The name of the file to open.
-		String fileName = "bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + ".json";
+		
+		String fullName = "";
+		String[] aux = name.split("\\.");
+		String className = aux[aux.length-1];
 
+		for(int i = 0; i<aux.length-1; i++)
+			fullName += aux[i] + ".";
+
+		fullName += "data." + className;
+		// The name of the file to open.
+		String fileName = "bin"+ java.io.File.separator + fullName.replace(".", java.io.File.separator) + ".json";
+		
+		
 		// This will reference one line at a time
 		String line = null;
 
@@ -277,13 +288,22 @@ public class jsonParser{
 		}
 	}
 
-	public static void writePacman(String name, List<MsPacmanCase> pacmanCases) {
+	public static void writePacman(String name, List<MsPacmanCase> pacmanCases) throws FileNotFoundException  {
 
 		// writing JSON to file:"JSONExample.json" in cwd 
+		String fullName = "";
+		String[] aux= name.split("\\.");
+		String className = aux[aux.length-1];
+
+		for(int i = 0; i<aux.length-1; i++)
+			fullName += aux[i] + ".";
+
+		fullName += "data." + className;
+		
 		PrintWriter pw = null;
 
 		try {
-			pw = new PrintWriter("bin/es/ucm/fdi/ici/c1920/practica4/grupo04/data/" + name + /*nameParts[nameParts.length-1] + */".json");
+			pw = new PrintWriter("bin"+ java.io.File.separator + fullName.replace(".", java.io.File.separator) + ".json");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -297,7 +317,7 @@ public class jsonParser{
 
 			// putting data to JSONObject 
 			jo.put("nearestPPillToPacman", c.nearestPPillToPacman);	  
-			
+
 			int move = c.movement.ordinal();
 			jo.put("movement", move);
 
@@ -310,12 +330,12 @@ public class jsonParser{
 			for(int j = 0; j<5; j++) 
 				characterIndex.add(c.activePPills[j]);
 			jo.put("characterIndex", characterIndex);
-			
+
 			JSONArray characterLastMove = new JSONArray();
 			for(int j = 0; j<5; j++) 
 				characterLastMove.add(c.characterLastMove[j]);
 			jo.put("characterLastMove", characterLastMove);
-			
+
 			JSONArray activePPills = new JSONArray();
 			for(int j = 0; j<4; j++) 
 				activePPills.add(c.activePPills[j]);

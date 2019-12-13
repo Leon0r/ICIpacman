@@ -36,7 +36,7 @@ public final class Ghosts extends GhostController{
 	 
 	
 	@Override
-	public void preCompute(String opponent) {		
+	public void preCompute(String opponent) {
 		GhostDataBase.setOpponentGhostName(opponent);		
 		GhostDataBase.readGhostCases();
     }

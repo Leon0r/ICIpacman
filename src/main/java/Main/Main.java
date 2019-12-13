@@ -28,7 +28,7 @@ public class Main {
 			PacmanController pacman = new MsPacMan();
 			GhostController ghosts = new Ghosts();
 			
-			int score = executor.runGame(pacman, ghosts, 30);
+			int score = executor.runGame(pacman, ghosts, 10);
 			System.out.println(score);
 			totalScore += score;
 			

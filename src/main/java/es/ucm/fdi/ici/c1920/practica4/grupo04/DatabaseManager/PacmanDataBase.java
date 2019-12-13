@@ -22,7 +22,7 @@ public class PacmanDataBase {
 	static String opponentGhostName;
 	static int casesChecked = 5;
 	static MsPacmanCase lastPacmanCase = null;
-	
+
 	public static void setOpponentGhostName(String name) {
 		opponentGhostName = name;
 	}
@@ -36,7 +36,7 @@ public class PacmanDataBase {
 	public static void removeLastCase() {
 		lastPacmanCase = null;
 	}
-	
+
 	public static void addCase(MsPacmanCase pacmanCase) {
 		MsPacmanCases.add(pacmanCase);
 	}
@@ -59,11 +59,22 @@ public class PacmanDataBase {
 		for(int h = 0; h < MsPacmanCases.size(); h++ ) {
 			// Para cada caso comparamos cuanto se parece al caso a comparar
 			MsPacmanCase c = MsPacmanCases.get(h);
-			
+
 			///-------------------------------------------------------------
 			double totalValue = 0.0; 	// Suma total acumulada de cada atributo			
 			double totalCases = 3.0;	// Atributos totales			
 			double aux = 0.0;		// Variable auxiliar para la suma
+			
+			// POSICION DE PACMAN
+			double distLimit = 5.0;
+			double chDist = 0;
+
+			chDist = game.getDistance(c.characterIndex[4], pacmanCase.characterIndex[4], DM.PATH);
+			if(chDist < distLimit && c.characterLastMove[4] == pacmanCase.characterLastMove[4])
+				aux = chDist / distLimit;
+			else
+				continue;
+			//-------------------------------------------------------------
 
 			// ESTADO DE LOS FANTASMAS
 			aux = 0;
@@ -88,14 +99,7 @@ public class PacmanDataBase {
 			// -------------------------------------------------------------
 
 			// CHARACTERS POSITION AND ORIENTATION WITHIN A RANGE
-			aux = 0.0;
-			double distLimit = 5.0;
-			double chDist = 0;
-			for(int i = 0; i<5; i++) {
-				chDist = game.getDistance(c.characterIndex[i], pacmanCase.characterIndex[i], DM.PATH);
-				if(chDist < distLimit && c.characterLastMove[i] == pacmanCase.characterLastMove[i])
-					aux += (0.25 * chDist / distLimit);
-			}
+			aux = compareGhostPosCases(game, c, pacmanCase, distLimit);
 
 			totalValue += aux;
 			// -------------------------------------------------------------
@@ -211,6 +215,28 @@ public class PacmanDataBase {
 			return movimientos[r.nextInt(movimientos.length)];
 		}
 
+	}
+
+	public static double compareGhostPosCases(Game game, MsPacmanCase currentCase, MsPacmanCase dataCase, double distLimit) {
+
+		double aux = 0.0;
+		double chDist = 0.0;
+		boolean[] used = {false, false, false, false};
+
+		for (int i = 0; i<4; i++) {
+			for(int j = 0; j<4; j++) {
+				if(!used[j]) {
+					chDist = game.getDistance(currentCase.characterIndex[i], dataCase.characterIndex[j], DM.PATH);
+					if(chDist < distLimit && currentCase.edibleGhosts[i] == dataCase.edibleGhosts[j] 
+							&& currentCase.characterLastMove[i] == dataCase.characterLastMove[j]) {
+						aux += (0.25 * chDist / distLimit);
+						used[j] = true;
+					}
+				}
+			}
+		}
+
+		return aux;	
 	}
 
 	public static void readPacmanCases() {		
