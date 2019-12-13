@@ -6,7 +6,6 @@ import es.ucm.fdi.ici.c1920.practica4.grupo04.MsPacMan;
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
-import pacman.game.internal.POType;
 
 public class Main {
 

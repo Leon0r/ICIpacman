@@ -240,10 +240,10 @@ public class PacmanDataBase {
 	}
 
 	public static void readPacmanCases() {		
-		//jsonParser.readGhost(opponentGhostName);
+		jsonParser.readPacman(opponentGhostName);
 	}
 
 	public static void printPacmanCases() {
-		// jsonParser.writeGhost(opponentGhostName, generatedMsPacmanCases);		
+		jsonParser.writePacman(opponentGhostName, generatedMsPacmanCases);		
 	}
 }

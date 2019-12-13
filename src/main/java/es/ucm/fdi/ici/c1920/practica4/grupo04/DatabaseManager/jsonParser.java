@@ -288,11 +288,11 @@ public class jsonParser{
 		}
 	}
 
-	public static void writePacman(String name, List<MsPacmanCase> pacmanCases) throws FileNotFoundException  {
+	public static void writePacman(String name, List<MsPacmanCase> pacmanCases) {
 
 		// writing JSON to file:"JSONExample.json" in cwd 
 		String fullName = "";
-		String[] aux= name.split("\\.");
+		String[] aux = name.split("\\.");
 		String className = aux[aux.length-1];
 
 		for(int i = 0; i<aux.length-1; i++)
@@ -328,7 +328,7 @@ public class jsonParser{
 
 			JSONArray characterIndex = new JSONArray();
 			for(int j = 0; j<5; j++) 
-				characterIndex.add(c.activePPills[j]);
+				characterIndex.add(c.characterIndex[j]);
 			jo.put("characterIndex", characterIndex);
 
 			JSONArray characterLastMove = new JSONArray();
