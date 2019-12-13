@@ -8,19 +8,17 @@ public class MsPacmanCase {
 	public int [] characterLastMove = new int[5];
 	public int[] activePPills = new int[4];
 	public int nearestPPillToPacman;
-	public int nonEdibleGhosts;
 	
 	public MOVE movement; // the solution movement for the case
 	
 	public MsPacmanCase(boolean[] edibleGhosts, int [] characterIndex, int [] characterLastMove,
-						int[] activePPills, int nearestPPillToPacman, int nonEdibleGhosts, int movement)
+						int[] activePPills, int nearestPPillToPacman, int movement)
 	{
 		this.edibleGhosts = edibleGhosts;
 		this.characterIndex = characterIndex;
 		this.characterLastMove = characterLastMove;
 		this.activePPills = activePPills;
 		this.nearestPPillToPacman = nearestPPillToPacman;
-		this.nonEdibleGhosts = nonEdibleGhosts;	
 		
 		this.movement = MOVE.values()[movement];
 	}

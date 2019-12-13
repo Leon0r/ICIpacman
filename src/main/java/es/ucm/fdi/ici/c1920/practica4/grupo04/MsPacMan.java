@@ -47,13 +47,10 @@ public final class MsPacMan extends PacmanController {
 		int [] characterLastMove = new int[5];
 		int[] activePPills = new int[4];
 		int nearestPPillToPacman = -1;
-		int nonEdibleGhosts = 0;
 
 
 		for(int i = 0; i < 4; i++) {
 			edibleGhosts[i] = game.isGhostEdible(GHOST.values()[i]);
-			if(!edibleGhosts[i])
-				nonEdibleGhosts ++;
 			characterIndex[i] = game.getGhostCurrentNodeIndex(GHOST.values()[i]);
 			characterLastMove[i] = game.getGhostLastMoveMade(GHOST.values()[i]).ordinal();
 			activePPills[i] = game.getPowerPillIndices()[i];
@@ -64,7 +61,7 @@ public final class MsPacMan extends PacmanController {
 
 		nearestPPillToPacman = DataGetter.findNearestPowerPill(game,activePPills);
 
-		pacmanCase = new MsPacmanCase(edibleGhosts, characterIndex, characterLastMove, activePPills, nearestPPillToPacman, nonEdibleGhosts, 0);
+		pacmanCase = new MsPacmanCase(edibleGhosts, characterIndex, characterLastMove, activePPills, nearestPPillToPacman, 0);
 
 	}
 
